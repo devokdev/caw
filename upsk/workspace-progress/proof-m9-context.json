@@ -1,0 +1,7 @@
+{
+  "summary": "Module 09 CONTEXT: Answered micro-exercise questions on testing core concepts. 1. If restricted to one test, it would be the redirect hot-path integration test since it represents the system's primary user value and any failure results in an absolute outage. 2. A test suite can hit a real database if the environment variable overrides (e.g. DATABASE_URL) are missing or ignored, causing the application context to initialize using the production/development database settings.",
+  "evidence": [
+    "Identified redirect hot-path test as the single most critical test target.",
+    "Indicated missing environment variable overrides (DATABASE_URL) as the primary cause of tests hitting real databases."
+  ]
+}

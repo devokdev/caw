@@ -1,0 +1,14 @@
+﻿# Module 02: Reading Logs - Evidence
+
+## Bug #3 (log level) - verified remediated
+- api/.env: LOG_LEVEL=info
+- api/app/config.py: log_level read from env, default 'info', NO hardcoded override
+- api/app/main.py _configure_logging: level = getattr(logging, settings.log_level.upper(), logging.INFO)
+- Live: GET /health -> api_err.log shows INFO linkops {"msg": "request received"} then {"msg": "response sent", "status": 200} - request in/out pairs present, no orphan errors.
+
+## Bug #4 (timezone) - verified remediated
+- SHOW timezone -> UTC
+- migrations/migrate.py: ALTER DATABASE upsk_sdf SET timezone TO 'UTC'; columns created_at/expires_at/clicked_at are timestamptz
+- app/database.py: connection option -c timezone=UTC
+- Models: DateTime(timezone=True) server_default func.now()
+- Live: now() = 2026-08-17T17:18:38+00:00; latest created_at = 2026-08-17T17:07:20+00:00 (both aware UTC, matching)

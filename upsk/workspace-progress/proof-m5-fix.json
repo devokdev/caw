@@ -1,0 +1,7 @@
+{
+  "summary": "Module 05 BREAK/FIX: reproduced symptom - unhandled exception handler returned the raw exception string in the 500 response (RuntimeError 'DO_NOT_LOG_ME_123 boom' leaked into the error.message field), which violates the no-stack-trace/no-leak contract. Reproduced via test_unhandled_error_returns_safe_500 failing with assert 'boom' not in body. Root cause: unhandled_exception_handler was passing str(exc) into error_envelope instead of the fixed safe message 'internal server error'. Fix: restored static safe message; raw exception text stays only in server logs (redacted), never in the client response.",
+  "evidence": [
+    "Reproduced: test_unhandled_error_returns_safe_500 failed - 'boom' contained in 500 body with DO_NOT_LOG_ME_123 boom and request_id test123.",
+    "Fixed by restoring safe envelope; after fix pytest -q: 35 passed."
+  ]
+}

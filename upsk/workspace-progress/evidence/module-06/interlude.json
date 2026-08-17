@@ -1,0 +1,9 @@
+{
+  "summary": "Interlude reflection (GitLab Jan 31 2017): (1) Backup verification - restore drills are the only real proof: schedule a monthly restore-on-scratch exercise against the URL shortener (pg_dump -> fresh instance -> data checksum + spot-check redirects), and record restore time. Until I have \"restored last Tuesday in 12 minutes\", backups are hopes. (2) Human-proof safeguards - the rm -rf on the wrong server points at layers, not warnings: (a) separate credentials per environment (production credentials unreachable from staging workstations), (b) destructive ops behind a soft-delete + delayed purge so a mistake is recoverable for N days, (c) least-privilege DB role (no DROP/TRUNCATE for app role), (d) confirmation gate requiring a second approver + explicit server name for rm/drop operations. Our delete_link soft-delete + cache purge pattern already applies the 'destruction must be recoverable' principle at the app level.",
+  "evidence": [
+    "restore-verification plan: scheduled pg_restore drill + timing + checksum verification",
+    "safeguards: environment-scoped credentials, soft-delete with delayed purge, least-privilege DB role, second-approver destructive-op gate",
+    "connection to build: cache layer already has graceful degradation; delete path uses 204 after DB row removal - a soft-delete variant would make accidental deletion recoverable"
+  ],
+  "artifacts": []
+}

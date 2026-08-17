@@ -1,0 +1,49 @@
+# Module 09: Testing - Evidence
+
+## Coverage added
+
+### Unit tests (api/tests/test_unit.py)
+- Password hashing: roundtrip, salt uniqueness, tamper detection, malformed hash rejection
+- JWT: roundtrip, expired token rejection, tampered token rejection, garbage rejection
+- Rate limiting: under-limit allowed, over-limit blocked, scope independence,
+  identifier independence, window reset
+- Config validation: weak JWT secret rejected, placeholder secret rejected
+
+### Service & concurrency tests (api/tests/test_links_service.py)
+- Code generation: length/shape, /r/ prefix
+- Pagination: no overlap/skip across page boundaries
+- **Concurrency**: parallel insert threads while reading pages -> no duplicates, stable
+  relative order of pre-existing rows (regression guard for Module 1/3 pagination bugs)
+- Deterministic ordering under repeated reads
+
+### Resilience tests (api/tests/test_resilience.py)
+- **Graceful degradation**: cache get returns None when Redis is down (no raise)
+- Redirect still returns 302 via Postgres fallback when Redis is down
+- Update still works when Redis invalidation is down (Module 5/6 decision B locked in)
+- Analytics: owner-only access, response shape
+
+### Deployment smoke test (api/tests/test_deploy.py)
+- `/health` returns 200 {ok: true}
+
+## Totals
+- Before Module 09: 43 tests
+- After Module 09: 68 tests (25 added)
+
+```
+pytest  ->  69 passed (final, includes test_deploy)
+```
+
+## Config
+`api/pytest.ini` sets testpaths, adds deprecation-warning filtering.
+
+## Test list (final)
+- test_auth.py (12) - auth, owner scoping, rate limits
+- test_cache_invalidation.py (3) - stale-cache guards
+- test_deploy.py (1) - health smoke
+- test_errors.py (7) - error envelope, redaction
+- test_link_validation.py (14) - URL validation abuse
+- test_links_service.py (4) - pagination determinism + concurrency
+- test_m4_fix.py (3) - rate-limit regression
+- test_resilience.py (5) - graceful degradation
+- test_search.py (5) - search & advanced queries
+- test_unit.py (15) - security, rate limit, config units

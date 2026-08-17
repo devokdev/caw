@@ -1,0 +1,22 @@
+{
+  "nonce": "",
+  "events": [
+    {
+      "module": 1,
+      "step": "pretest",
+      "event_type": "pretest",
+      "data": {
+        "self_rating": "strong",
+        "answers": {
+          "2_slow_app_first_3": "1) response-time breakdown to see where time goes (API vs DB vs external call), 2) resource usage (CPU, memory, DB connection pool), 3) what changed recently (deploy/config/data) plus error and retry logs",
+          "3_econnrefused": "The app tried to reach a Postgres server on the local machine at port 5432 and nothing answered there - the database service is down or on another port.",
+          "4_symptom_vs_root_cause": "Symptom is what you observe (page is slow); root cause is the deeper reason it could go wrong (N+1 query). Fixing the symptom treats the effect; fixing the root cause stops the class of bug recurring.",
+          "5_works_locally_not_prod": "1) environment difference - config/env vars, dependency versions, OS behavior; 2) production data or concurrency difference that triggers a code path local runs never exercise.",
+          "6_read_error_vs_reproduce": "Read the error message carefully first - it names the component and location of failure, the cheapest evidence for a specific hypothesis; reproduction comes after as verification.",
+          "7_2am_service_down_first": "Check if anything was deployed recently - the most common cause of sudden production downtime and non-destructive; restarting first can destroy in-memory evidence needed for root cause.",
+          "8_it_worked_yesterday": "What changed since then? (deploy, config, dependency, data)"
+        }
+      }
+    }
+  ]
+}

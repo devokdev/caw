@@ -1,0 +1,8 @@
+{
+  "summary": "Module 08 VERIFY: Answered verification questions on search design. Building SQL with string concatenation leads to SQL injection. Capping page_size protects database/application memory against malicious or accidental heavy queries (DoS prevention). Search engines introduce additional operational costs: managing new infrastructure nodes, data synchronization lag/sync jobs, and code complexity.",
+  "evidence": [
+    "String concatenation allows input to break out of query boundaries and execute arbitrary SQL commands (SQL Injection).",
+    "Uncapped page_size can cause high memory usage, high database load, and application crashes (DoS).",
+    "Dedicated search engines add complex sync pipelines, synchronization lag, and infrastructure maintenance overhead."
+  ]
+}

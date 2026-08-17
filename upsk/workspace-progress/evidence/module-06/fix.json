@@ -1,0 +1,11 @@
+{
+  "summary": "FIX: Root-caused to the DELETE write path missing invalidate_redirect_target (keys computed in cache service as redirect:<code>, invalidation belongs in every write path that changes or removes the source row). Restored asyncio.run(cache_service.invalidate_redirect_target(link.code)) in the DELETE handler. TTL stays settings.redirect_cache_ttl_seconds (300s) as the expiration safety net. Added regression suite test_cache_invalidation.py: delete invalidates cache (redirect -> 404), update invalidates cache (redirect -> new URL), second redirect is a cache hit. Full suite green.",
+  "evidence": [
+    "fix: DELETE /links/{id} now invalidates redirect:<code> after row deletion",
+    "regression: test_delete_invalidates_cache passed (cached key gone after delete, redirect returns 404)",
+    "regression: test_update_invalidates_cache passed (redirect Location switches to new URL immediately)",
+    "regression: test_second_redirect_is_cache_hit passed",
+    "full suite: 38 passed"
+  ],
+  "artifacts": ["api/app/routers/links.py", "api/tests/test_cache_invalidation.py"]
+}

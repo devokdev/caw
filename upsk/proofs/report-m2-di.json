@@ -1,0 +1,56 @@
+{
+  "nonce": "JipOsgnrJHL2SimttR3B9",
+  "events": [
+    {
+      "module": 2,
+      "step": "reflect",
+      "event_type": "module_evaluation",
+      "data": {
+        "narrative": "Module 2 (Reading Logs) - the student read live request/response log pairs, verified UTC timestamp normalization across app and DB, then discovered a forged admin-login log line embedded inside a user-controlled URL field. They recognized it as log injection, hardened the logging boundary with control-character sanitization, and locked the fix with a regression test.",
+        "overall": 5,
+        "dimension_scores": [
+          {"key":"hypothesis_quality","score":5,"observation":"Hypothesized the forged line was log injection (user-controlled newline + crafted JSON) from log structure alone before touching code.","evidence":"Correctly inferred the r-102 admin login had no matching request-received event and sat inside r-101's url value."},
+          {"key":"log_literacy","score":5,"observation":"Reconstructed the full request timeline from live logs - login (200, 235.6ms), link create (201, 41.9ms), missing link (404, 16.5ms) - and spotted the temporal anomaly of the embedded forged entry.","evidence":"Observed log timeline: request received -> response sent pairs with duration_ms for every request; identified the orphan r-102 event."},
+          {"key":"reproduction_skill","score":4,"observation":"Built a deterministic regression test feeding the exact incident payload into _log and asserting single-line JSON output.","evidence":"tests/test_log_injection.py replays the newline+admin-login URL and asserts url field has no \\n/\\r."},
+          {"key":"communication_under_pressure","score":4,"observation":"Explained the forged entry clearly: evidence in the log itself (no request-received for r-102), the trust-boundary consequence, and the required fix.","evidence":"Summary: the admin login is FORGED - embedded inside prior line's url field; logs are a trust boundary."},
+          {"key":"root_cause_depth","score":5,"observation":"Root-caused to the boundary: user-controlled data interpolated into log output without escaping control characters - not a 'bad log line' but a vulnerability class.","evidence":"Fix at logging boundary (app/main.py _sanitize strips [\\x00-\\x1f\\x7f]); identified that any external data crossing into logs must be sanitized like SQL."},
+          {"key":"postmortem_quality","score":3,"observation":"Module exercises postmortem lightly; student connected the lesson to a reusable rule (ask if every new log line logs user data and is sanitized) but did not write a formal postmortem.","evidence":"REFLECT answers named risk (forged logs hide tracks) and mitigation (sanitize user data at the logging boundary)."}
+        ],
+        "strengths": [
+          "Detected the forged admin-login line from log structure alone (no request-received for r-102, embedded in r-101's url field) - genuine log literacy.",
+          "Applied the fix at the logging boundary with control-character sanitization, not at a single call site - closes the whole class.",
+          "Locked the fix with a regression test replaying the exact incident payload."
+        ],
+        "growth_areas": [
+          "Postmortem framing is thinner than the other dimensions - a one-paragraph blameless writeup (impact, root cause, remediation) would round out this module."
+        ],
+        "recommendation": "For Module 3 (Reproduction), write a minimal repro script first and confirm it fails before changing any code - the deterministic-repro habit will pay off on the intermittent bugs.",
+        "public_evidence": [
+          {
+            "artifact": "Logging boundary hardening in app/main.py + regression test tests/test_log_injection.py",
+            "student_action": "Fixed a log-injection vulnerability by sanitizing user-controlled fields before they reach the structured log stream, and verified the fix with a regression test.",
+            "technical_detail": "app/main.py _log now passes every field through _sanitize() which strips control characters (newline, CR) from string values before json.dumps output; tests/test_log_injection.py replays the attacker URL.",
+            "proof": "pytest tests/test_log_injection.py -> pass; captured log line renders the whole malicious URL as a single value: 'https://normal-url.com {\"ts\"...\"admin login successful\"...}' with no newlines.",
+            "ability": "Finds and closes security vulnerabilities at the right layer",
+            "reviewer_value": "Shows a security vulnerability was found (log forging via newline injection), root-caused to unsanitized user data crossing a trust boundary, and fixed with a regression guard - not a symptom patch.",
+            "confidence": "demonstrated"
+          }
+        ],
+        "student_knowledge": {
+          "terminology_gaps": [],
+          "concepts_demonstrated": [
+            {"concept":"log injection / log forging","evidence":"Detected the forged admin login embedded in a URL value and fixed the boundary sanitization."},
+            {"concept":"UTC timestamp normalization","evidence":"Verified DB timezone UTC, timestamptz columns, and matching aware UTC values for now() and created_at."},
+            {"concept":"request-flow log timeline reconstruction","evidence":"Rebuilt login/create/404 timelines from request-received/response-sent pairs with duration_ms."}
+          ],
+          "teaching_approaches": [
+            {"concept":"log injection","approach":"example","detail":"Used the incident log excerpt itself as evidence (orphan req_id, embedded JSON) before any code","effective":true}
+          ],
+          "effective_level": "intermediate",
+          "learning_style_signals": ["evidence-first verification over code reading", "benefits from concrete reproduction scripts"],
+          "confidence_level": "high"
+        }
+      }
+    }
+  ]
+}

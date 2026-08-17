@@ -1,0 +1,6 @@
+{
+  "summary": "Module 08 BREAK: Instructing the CLI to inject the bug. We ran the test suite and confirmed 69 tests passed, indicating no bug is present yet or the bug is waiting to be injected.",
+  "evidence": [
+    "Ran pytest and confirmed 69 tests passed."
+  ]
+}

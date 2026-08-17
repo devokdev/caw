@@ -1,0 +1,6 @@
+{
+  "summary": "Module 09 BUILD PAUSE: Explained why flaky tests destroy developer trust. Flaky tests erode confidence in the test suite as a source of truth, causing developers to ignore genuine test failures as environment noise, waste CPU/time rerunning pipelines, and eventually bypass checks entirely.",
+  "evidence": [
+    "Identified loss of test suite credibility and risk of developers ignoring real regression failures as key consequences of flaky tests."
+  ]
+}

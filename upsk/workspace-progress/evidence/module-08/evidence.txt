@@ -1,0 +1,51 @@
+# Module 08: Search & Advanced Queries - Evidence
+
+## What was built
+- `GET /links/search?q=<term>` - owner-scoped, case-insensitive substring search across
+  `code`, `long_url`, and `tags`, ranked with exact code matches first, then newest.
+- Backed by PostgreSQL trigram (GIN) indexes so `ILIKE '%term%'` uses an index instead of
+  a sequential scan.
+
+## Endpoint
+```
+GET /links/search?q=advanced&offset=0&limit=20   (Bearer token required)
+{
+  "items": [{ ...LinkResponse }],
+  "total": 1,
+  "offset": 0,
+  "limit": 20
+}
+```
+
+## Index verification (EXPLAIN with enable_seqscan=off)
+```
+Limit
+  ->  Sort  (rank: code = term first, then created_at DESC, id DESC)
+        ->  Bitmap Heap Scan on links
+              Filter: (created_by = 1)
+              ->  BitmapOr
+                    ->  Bitmap Index Scan on ix_links_code_trgm
+                    ->  Bitmap Index Scan on ix_links_long_url_trgm
+                    ->  Bitmap Index Scan on ix_links_tags_trgm
+```
+All three search columns resolve to trigram index scans - no Seq Scan on the hot path.
+
+## Schema change
+Migration `api/migrations/migrate.py` adds:
+- `CREATE EXTENSION IF NOT EXISTS pg_trgm`
+- `ix_links_long_url_trgm` (gin_trgm_ops on long_url)
+- `ix_links_tags_trgm` (gin_trgm_ops on tags)
+- `ix_links_code_trgm` (gin_trgm_ops on code)
+
+## Owner scoping
+Search filters `created_by == owner_id` AND the term match. A user searching another
+user's URL terms gets 0 results (verified by `test_search_is_owner_scoped`).
+
+## Tests (api/tests/test_search.py, 5 tests)
+- `test_search_by_long_url_fragment` - substring match on long_url
+- `test_search_by_tag` - tag match
+- `test_search_is_owner_scoped` - Bob cannot find Alice's links
+- `test_search_no_results` - empty result shape
+- `test_search_requires_auth` - 401 without token
+
+Full suite: 43 passed (after Module 08).

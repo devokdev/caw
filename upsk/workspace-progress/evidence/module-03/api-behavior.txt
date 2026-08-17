@@ -1,0 +1,7 @@
+CREATE 201: {"id":14,"code":"VdA1Q7","short_url":"/r/VdA1Q7","long_url":"https://example.com","created_at":"2026-08-05T19:03:06.896871"}
+REDIRECT: HTTP/1.1 302 Found, location: https://example.com
+LIST: 4 items, none are abuse payloads (10 abuse variants returned 400)
+PAST EXPIRES_AT: 400
+TAGS+EXPIRY: 201 {"id":15,"code":"CcHpSL","tags":["docs","promo"]}
+UNKNOWN CODE /r/nope99: 404
+HEALTH: 200 {"ok":true}

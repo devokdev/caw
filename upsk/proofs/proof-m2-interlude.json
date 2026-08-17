@@ -1,0 +1,6 @@
+{
+  "summary": "Interlude reflection: the log field that would make the next investigation faster is a per-request correlation id (request_id) attached to EVERY log line, including worker/job context - so a single user action can be traced end-to-end across API, queue, worker, and database in one grep. Under pressure during Knight-style incidents, the bottleneck is connecting scattered signals; a stable request_id across all layers collapses minutes of log archaeology into one filter. I already log request_id on the access-log middleware pairs; extending the same id into the cache-invalidation and analytics worker paths would make that the top incident-channel field.",
+  "evidence": [
+    "Observed request_id on every request received/response sent pair in api_err.log (e.g., request_id=17352058 on POST /links), proving the correlation field is already emitted at the API layer."
+  ]
+}

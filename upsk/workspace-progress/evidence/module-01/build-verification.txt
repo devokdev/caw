@@ -1,0 +1,23 @@
+BUILD VERIFICATION - MODULE 01 (recorded 2026-08-05)
+Bug 1 (startup crash, config mismatch):
+  - Before fix: python -c "import app.main" -> ValidationError: database_url Field required (env had DB_URL)
+  - DB check: SELECT 1 -> 1; service postgresql-x64-16 Running (DB was never the problem)
+  - Fix: renamed DB_URL -> DATABASE_URL in .env
+  - After fix: curl /health -> {"ok":true}
+Bug 2 (pagination overlap):
+  - Before fix: page1 last=wjQcVY, page2 first=wjQcVY (overlap by 1)
+  - Fix: removed offset-1 shift in list_links; kept ORDER BY created_at DESC, id DESC
+  - After fix: 10 links collected across 3 pages, 10 unique, 0 duplicates; p1/p2 and p2/p3 overlap = 0
+Lesson: symptoms lie - the error pointed at the DB, but the root cause was a config contract mismatch (env var name), exactly as hypothesis-first debugging predicted.
+Bug 3 (intermittent duplicates under concurrent inserts):
+  - Offset math re-checked: offset(offset).limit(limit) correct (Bug 2 fix held).
+  - Hypothesis: ORDER BY created_at DESC without unique tiebreaker -> tied rows can reorder between queries -> page boundary straddling.
+  - Repro (injected missing tiebreaker, forced created_at ties, paged limit=5 collecting all IDs): first traversal -> total=111 collected=111 dups=[12,46,45,44,43,...] missing={16,72..95}
+  - Fix: restored ORDER BY created_at DESC, id DESC (deterministic total order).
+  - After fix: tie-injection repro 3 rounds x 10 traversals + 3 rounds x 3 traversals -> all clean, 0 duplicates.
+  - Note: a stable sort key (unique tiebreaker) is a hard dependency of offset pagination.
+FIX step (deterministic ordering):
+  - Bug class: pagination with no ORDER BY = non-deterministic ordering (module-confirmed).
+  - Repro limits on this fork: native Postgres append/heap order is stable at small scale; reorg test (UPDATE-all + VACUUM x20) never changed page 0 content -> latent bug, passes in dev, breaks in production (exactly as the module warns). Reproducible variant = Bug 3 (unstable sort under ties).
+  - Fix: ORDER BY Link.id DESC (deterministic total order).
+  - Verify (fixed): same-query-twice under concurrent inserter -> 0/40 reorders; atomic 3-page check -> 0/30 rounds with dups, every item exactly once; pytest -> 15 passed.

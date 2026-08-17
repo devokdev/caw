@@ -1,0 +1,7 @@
+{
+  "summary": "Module 09 VERIFY: Answered verification questions. 1. Tests protect against critical regressions (auth bypasses, broken redirects, IDOR vulnerabilities, data accumulation, input sanitization bypass). 2. Flaky tests are detected by sporadic failures on identical code; they are verified by running tests repeatedly (e.g. loops/concurrency). 3. Tests hitting real DBs can corrupt production/development data, cause test interference, and impact production performance/load.",
+  "evidence": [
+    "Identified protection against auth, redirect, IDOR, retention, and validation regressions.",
+    "Explained flakiness detection using repetition, and the severe risks of test execution on production database instances."
+  ]
+}

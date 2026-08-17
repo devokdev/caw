@@ -1,0 +1,7 @@
+{
+  "summary": "FIX step documentation for Module 05 injected bug (stack trace leaked in 500 response). Error origin: unhandled_exception_handler in app/main.py. Flow: exception raised anywhere in the app -> FastAPI dispatches to the generic Exception handler -> handler builds JSONResponse. Bug: it passed str(exc) as the message, so the raw exception text (containing internal detail and the DO_NOT_LOG_ME_123 sentinel) reached the client. Logs: the handler logs error_type + redact(str(exc)) so raw text stays server-side only. Fix: restored the static safe message 'internal server error' so the envelope message never contains exception internals; redact() remains applied to log context. Regression: test_unhandled_error_returns_safe_500 now asserts 'boom' and 'Traceback' are absent from the response body, and full suite is green.",
+  "evidence": [
+    "test_errors.py test_unhandled_error_returns_safe_500: asserts body['error']['code']=='internal_error', request_id=='test123', and 'boom'/'Traceback' not in response body.",
+    "pytest -q: 35 passed after the fix (was 1 failed during BREAK reproduction)."
+  ]
+}

@@ -1,0 +1,12 @@
+CHECKPOINT DEMO - MODULE 03 (recorded 2026-08-05)
+POST /links  -> 201 {"id":21,"code":"MFfmzL","short_url":"/r/MFfmzL","long_url":"https://example.com/docs"}
+GET  /r/8lxCpa -> 302 Location: https://www.postgresql.org/docs/current/index.html
+GET  /links/20 -> 200 full record incl. expires_at + tags
+GET  /links?page=1&page_size=5 -> paged list with total
+KNOWLEDGE CHECK (abuse resistance):
+  ftp://host     -> 400 rejected
+  javascript:... -> 400 rejected
+  https://good.com@evil.example.com -> 400 rejected (userinfo)
+  control char in URL -> 400 rejected
+  past expires_at -> 400 rejected
+  unknown /r/{code} -> 404 (indistinguishable from expired - fail closed)

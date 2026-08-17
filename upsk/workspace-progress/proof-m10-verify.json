@@ -1,0 +1,6 @@
+{
+  "summary": "Module 10 VERIFY: Answered verification questions. 1. Hardcoding PORT causes routing mismatch and failed deployment. 2. Health check should only test if process is alive; it shouldn't check dependencies to avoid restart cascades. 3. Readiness check verifies Postgres and Redis connectivity to prevent routing traffic before container is ready. 4. Graceful shutdown drains in-flight requests and finishes tasks to prevent transaction corruption and data loss. 5. Set connect_timeout=5 for Postgres and socket_timeout=0.5 for Redis to fail fast. 6. Rollback requires redeploying last stable image and restoring snapshot if migration was destructive. 7. Build-time config is baked in during build, runtime config is dynamic env vars (Database/Redis URLs, secrets) injected at start.",
+  "evidence": [
+    "Answered all verification questions in detail regarding port binding, health/readiness difference, timeouts, graceful shutdown, migration rollbacks, and config boundaries."
+  ]
+}

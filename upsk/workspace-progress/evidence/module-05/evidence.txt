@@ -1,0 +1,26 @@
+MODULE 05 - ERROR HANDLING & LOGGING (FastAPI track)
+
+Design: Safe error envelope shared by every 4xx/5xx response:
+  {"error": {"code": <stable string>, "message": <human readable, redacted>, "request_id": <8-char correlation id>}}
+
+Implementation surfaces:
+- app/errors.py: error_envelope() + error_code_for_status() (400 request_invalid, 401 unauthorized,
+  403 forbidden, 404 not_found, 405 method_not_allowed, 409 conflict, 422 request_invalid,
+  429 too_many_requests, default internal_error) + redact() that strips Bearer tokens and
+  password/secret/token/api_key= fields from messages and logs.
+- app/main.py: request_id middleware (uuid4[:8]) on request.state, timing middleware logs
+  request_id/method/path/status/duration_ms for every request; HTTPException handler maps to
+  envelope; RequestValidationError handler maps to 400 request_invalid; unhandled Exception
+  handler maps to 500 internal_error with redacted error context.
+- 4xx = client mistakes (validation/auth/not found/rate limit), 5xx = server mistakes.
+- No stack traces are ever returned to clients; server logs carry request_id correlation.
+
+Evidence run:
+- pytest -q: 35 passed (includes test_errors.py Module 05 suite: validation->400 envelope,
+  not-found->404 envelope, unauthorized->401 envelope, rate-limit->429, unhandled error->safe 500
+  with request_id, secret-not-logged sentinel check DO_NOT_LOG_ME_123).
+- Validation error returns 400 {"error":{"code":"request_invalid","message":...,"request_id":"..."}}
+- Unhandled server error returns 500 {"error":{"code":"internal_error",...,"request_id":"test123"}}
+  with no Traceback in the body.
+- Secrets/PII redaction verified: bearer sentinel DO_NOT_LOG_ME_123 does not appear in responses
+  and redact() turns "password=supersecret" into "password=[REDACTED]".

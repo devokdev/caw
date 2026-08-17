@@ -1,0 +1,48 @@
+# Module 10: CI/CD & Deployment - Evidence
+
+## Deployment artifacts
+
+### Dockerfile
+- `python:3.12-slim` base
+- Installs libpq (psycopg2 compile deps)
+- Installs pinned requirements
+- Runtime CMD runs migrations then starts uvicorn on `${PORT:-8000}`
+- `.dockerignore` excludes venv, caches, logs, secrets, progress
+
+### railway.json
+- Dockerfile builder
+- Health check on `/health`
+- ON_FAILURE restart with 10 max retries
+- Single replica
+
+### GitHub Actions (`.github/workflows/ci.yml`)
+- **test job**: Postgres 16 + Redis 7 as services, runs migrations, runs full pytest
+  suite, verifies the search query EXPLAIN plan uses the trigram index (fails build if
+  the search hot path degrades to a Seq Scan)
+- **docker-build job**: builds the image (runs after tests pass)
+
+### docker-compose (infra/docker-compose.yml)
+- postgres + redis + api with health-gated startup ordering
+
+## Verification performed
+
+### Docker image build
+```
+docker build -t linkops:ci -f Dockerfile .   ->  DONE (naming to docker.io/library/linkops:ci)
+```
+
+### Container runtime (against native Postgres/Redis)
+```
+docker run ... linkops:ci
+GET /health                          -> 200 {"ok": true}
+POST /auth/login (alice)             -> 200 access_token
+POST /links                          -> 201 {code: "wRdai2"}
+GET  /r/wRdai2                       -> 302 -> https://docker.example/ok
+GET  /links/search?q=docker          -> total=1
+```
+Migrations ran on container start; dev users seeded.
+
+## CI test plan proof
+- Full suite: 69 passed
+- EXPLAIN gate: `ix_links_code_trgm` present in plan (asserted in CI)
+- YAML validated with yq: top-level keys `name`, `on`, `jobs`

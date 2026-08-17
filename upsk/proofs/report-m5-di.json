@@ -1,0 +1,82 @@
+{
+  "nonce": "cEfOzzZQTkzoo2jytl4nb",
+  "events": [
+    {
+      "module": 5,
+      "step": "reflect",
+      "event_type": "module_evaluation",
+      "data": {
+        "narrative": "Incident response as communication under fire: classified scenarios with reasoning, chose triage-priority and cadence decisions, handled the post-incident data-loss twist with a real recovery demonstration, and drafted stakeholder messages that lead with the bad news.",
+        "overall": 4,
+        "dimension_scores": [
+          {
+            "key": "severity_classification",
+            "score": 5,
+            "observation": "Classified all three scenarios with the business-context reasoning the module demands, including the unconditional SEV1 for cross-user private data and the SEV3 for a delayed analytics job.",
+            "evidence": "Micro-exercise: IDOR = SEV1 data breach with regulatory implications; images-on-ecommerce = SEV2 vs internal tool SEV3; delayed weekly reports = SEV3 unless real-time billing."
+          },
+          {
+            "key": "communication_first",
+            "score": 5,
+            "observation": "Chose communicate-first, gave a concrete 60-second template (severity, knowns, unknowns, next action, ETA), and answered the VP-pressure question with the played-forward cost of saying 'it is fine'.",
+            "evidence": "triage_priority=B recorded; first stakeholder update answers the demo question and sets the next-update expectation."
+          },
+          {
+            "key": "cadence_discipline",
+            "score": 4,
+            "observation": "Applied the floor-plus-trigger insight: 10-15 minute heartbeat plus immediate state-change updates, with severity-adjusted stretch for SEV2/SEV3.",
+            "evidence": "communication_cadence=B with 'whichever comes first' reasoning; rejected 5-min because it burns 12 of every 30 minutes."
+          },
+          {
+            "key": "data_loss_response",
+            "score": 5,
+            "observation": "Did not freeze or promise false recovery; assessed backups (daily + WAL + PITR), built the plan, executed it live on a staging table, and notified stakeholders with a bad-news-first VP message.",
+            "evidence": "recover_demo.py: snapshot->delete->restore->verify->notify all printed; recovery plan matches the module's expected 5 steps."
+          },
+          {
+            "key": "honesty_under_pressure",
+            "score": 5,
+            "observation": "Explicitly refused the 'it is not a real breach' line and documented why, in both the VERIFY and data-loss messages.",
+            "evidence": "Truthful line: 'I cannot confirm or deny a breach yet; I will have a definitive answer by 09:56.'"
+          },
+          {
+            "key": "postmortem_quality",
+            "score": 3,
+            "observation": "Recovery and messages are strong, but the postmortem is mentioned, not written; no blameless writeup artifact with root-cause, impact, and owner-backed remediation items.",
+            "evidence": "VP message references a scheduled postmortem; no separate postmortem document produced."
+          }
+        ],
+        "strengths": [
+          "Severity reasoning is context-driven, not rote -- the e-commerce-vs-internal-tool split shows real understanding.",
+          "Backup assessment correctly distinguished app-layer absence from DB-layer availability and used PITR instead of giving up.",
+          "Executed the recovery mechanics rather than just describing them, and proved the deleted rows come back."
+        ],
+        "growth_areas": [
+          "Write the actual blameless postmortem (timeline, root cause, impact, action items with owners) as an artifact.",
+          "Practicing writing the 60-second update under a real timer would harden the habit further."
+        ],
+        "recommendation": "Draft a one-page postmortem for the auth-bypass + data-loss incident with owner-backed remediations, and time a practice 60-second update.",
+        "public_evidence": [
+          {
+            "artifact": "PITR recovery demonstration",
+            "student_action": "Executed the data-loss recovery plan live on a throwaway staging table: snapshot pre-attack rows, simulate attacker deletion, restore from the snapshot, verify IDs, notify users.",
+            "technical_detail": "recover_demo.py uses CREATE TABLE ... LIKE links INCLUDING ALL, deletes 3 rows, re-inserts via ON CONFLICT (id) DO NOTHING, and prints verification.",
+            "proof": "Output: snapshot 5 -> deleted [2019,2020,2021] -> restored 3 -> present again [2019,2020,2021].",
+            "ability": "incident recovery / PITR mechanics",
+            "reviewer_value": "Shows a candidate can turn a recovery plan into working SQL mechanics without touching production data.",
+            "confidence": "verified"
+          },
+          {
+            "artifact": "Stakeholder communication artifacts",
+            "student_action": "Drafted a 60-second first update (severity, demo answer, knowns, unknowns, next action, ETA), a cadence policy (floor plus trigger), and a bad-news-first VP data-loss message.",
+            "technical_detail": "Messages follow the module's structure: acknowledge, state what is known/unknown, set next-update expectation, lead with bad news in follow-ups.",
+            "proof": "triage_priority=B and communication_cadence=B recorded; data-loss message leads with 12 links deleted, then restoration status and next step.",
+            "ability": "incident communication / stakeholder management",
+            "reviewer_value": "Demonstrates the non-technical-VP test and the honesty-under-pressure test that most engineers fail.",
+            "confidence": "verified"
+          }
+        ]
+      }
+    }
+  ]
+}

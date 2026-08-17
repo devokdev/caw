@@ -1,0 +1,7 @@
+{
+  "summary": "Module 10 CONTEXT: Answered micro-exercise questions. 1. Binding to localhost limits traffic to container loopback, causing external routing on Railway to fail. 2. Hardcoding ports ignores the dynamic PORT env var injected by the hosting provider, leading to routing mismatch and failed health checks.",
+  "evidence": [
+    "Defined why localhost binding prevents external routing in container platforms.",
+    "Explained routing mismatch consequences of ignoring dynamic PORT injection."
+  ]
+}

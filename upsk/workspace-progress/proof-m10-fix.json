@@ -1,0 +1,8 @@
+{
+  "summary": "Module 10 FIX: Detected and resolved a deployment misconfiguration in railway.json where healthcheckPath was pointed to the liveness endpoint (/health) instead of the readiness endpoint (/ready), along with a high timeout value (100s). Re-pointing to /ready guarantees the orchestrator only sends traffic once Postgres and Redis are fully reachable.",
+  "evidence": [
+    "Modified railway.json to set healthcheckPath to /ready and healthcheckTimeout to 5.",
+    "Verified local container startup and health/readiness endpoints respond correctly under normal and simulated failure conditions.",
+    "Confirmed graceful shutdown behavior upon container termination."
+  ]
+}

@@ -1,0 +1,26 @@
+MODULE 04 BREAK — single-core CPU spike on POST /links with long repeating-char URLs
+
+Tool-led investigation:
+1. cProfile of POST /links with a 5000-char repeating URL:
+   total 0.055s, dominated by TestClient/httpx/anyio harness overhead; no single
+   app function hot spot, no regex engine time.
+2. Latency scaling probe (live server, 3 runs, best-of) across URL lengths:
+   normal (25):   11.2ms
+   rep_1k (1019):  7.0ms
+   rep_10k (10019): 7.1ms
+   rep_50k (50019): 11.1ms
+   rep_100k (100019): 16.5ms
+   => LINEAR scaling, no super-linear blowup. No catastrophic backtracking.
+3. Regex audit: no regex with nested/ambiguous quantifiers exists on the URL
+   path. Validation uses urllib.parse.urlparse (linear). The only regexes are
+   simple character classes (control-char strip in main.py, token/password
+   redaction in errors.py) which are linear-time.
+   Conclusion: the canonical ReDoS bug is structurally ABSENT in this fork.
+
+Real, fixable version of the bug class (found via the scaling data):
+- long_url had NO max_length: attacker-controlled input is unbounded, so CPU
+  and memory scale linearly with payload size. That is a resource-exhaustion
+  vector (the module's symptom: one request maxes a core).
+Fix: schemas/link.py CreateLinkRequest.long_url now Field(max_length=2048).
+Verified: 2048-char URL accepted; 2049-char rejected with
+  string_too_long; full suite 74 tests exit 0.

@@ -1,0 +1,6 @@
+{
+  "summary": "Module 03 CONTEXT (Reproduction Science): understand that flaky bugs are usually deterministic with an unknown trigger variable. Micro-exercise answered: (1) Three questions to narrow 'app is slow sometimes': (a) when - which time window/day, does it correlate with traffic, deployments, or cron jobs? (b) where - which endpoint/operation, all users or one segment, one region or all? (c) what state - concurrent load level, dataset size, cache warmth, which DB rows involved? The goal is to convert the hiding variable into an always-condition. (2) 'I cannot reproduce it' is a statement about my current ability - honest and fixable; 'it is not reproducible' is a claim about reality that requires proof. In a standup say the former - it keeps the investigation alive and invites help instead of closing the door.",
+  "evidence": [
+    "Concept locked: the reproduction approach is to find the variable that controls the trigger (concurrency, timing, state) and force it - same as the e-commerce double-charge fix (20 simultaneous requests for same cart triggered it on first run)."
+  ]
+}

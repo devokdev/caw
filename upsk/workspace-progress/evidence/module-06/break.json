@@ -1,0 +1,9 @@
+{
+  "summary": "BREAK: reproduced a stale-cache incident. Injected bug removed cache invalidation from the DELETE path. Symptom: after deleting a link, GET /r/<code> still returned HTTP 302 with the old Location header (served from the Redis cache) instead of 404. Reproduced live via API: create -> redirect 302 (cache populated) -> delete 204 -> redirect again still 302 (stale).",
+  "evidence": [
+    "create PJOkXV 2088 -> redirect 302 https://stale.example/z -> delete 204 -> redirect after delete 302 https://stale.example/z (expected 404, stale cache served)",
+    "root cause hypothesis: DELETE write path omits invalidate_redirect_target, so the cached code->url entry survives the row deletion and outlives it until TTL",
+    "confirmed by inspecting links.py delete_link handler: no cache invalidation call"
+  ],
+  "artifacts": ["api/app/routers/links.py", "api/app/services/cache.py"]
+}

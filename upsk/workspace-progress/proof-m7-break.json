@@ -1,0 +1,7 @@
+{
+  "summary": "Module 07 BREAK: Simulated worker connection failure due to RESP3 HELLO command compatibility issues with Redis 5. Captured the connection exception and verified the consumer retry loop in Celery logs.",
+  "evidence": [
+    "Ran Celery worker and verified connection error in logs: Maintenance notifications are only supported with hiredis and RESP3 parsers",
+    "Confirmed redirect endpoint degrades gracefully when Redis/Celery is down or disconnected."
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "nonce": "",
+  "events": [
+    {
+      "module": 5,
+      "step": "reflect",
+      "event_type": "module_evaluation",
+      "data": {
+        "narrative": "Shipped a consistent, safe error envelope plus structured request-correlated logging. The DECIDE choice was graceful degradation (B) for runtime availability - the public redirect hot path must never 500 when a cache or queue is down - while input validation stays fail-fast. The BREAK surfaced a hole in that resilience layer: the unhandled-exception handler leaked raw exception text into the 500 body, which I reproduced, root-caused to passing str(exc) into the envelope, and fixed by restoring the static safe message with redaction kept on log context, closing with a full regression run (35 passed).",
+        "overall": 5,
+        "dimension_scores": [
+          {
+            "key": "tradeoff_reasoning",
+            "score": 5,
+            "observation": "Chose graceful degradation for external dependencies (cache/queue down -> fall back to Postgres, log degradation, never 500 the redirect) while keeping validation fail-fast; named the exact hot path that must not degrade.",
+            "evidence": "module_05 decision B reasoning recorded: 'the public redirect hot path must never 500 because a cache or queue is down - fall back to the source of truth (Postgres) and log the degradation'."
+          },
+          {
+            "key": "debugging_methodology",
+            "score": 5,
+            "observation": "Reproduced the injected stack-trace leak via the failing regression test (assert 'boom' not in response body), root-caused it to unhandled_exception_handler passing str(exc) as the message, fixed the one-line bug, and closed with the full suite green.",
+            "evidence": "test_unhandled_error_returns_safe_500 failed during BREAK ('boom' contained in 500 body) then passed after the fix; pytest -q: 35 passed."
+          },
+          {
+            "key": "security_awareness",
+            "score": 5,
+            "observation": "Kept the redaction contract intact: raw exception text and bearer tokens never reach responses or logs; the sentinel DO_NOT_LOG_ME_123 is asserted absent from responses and redact('password=supersecret')==='password=[REDACTED]'.",
+            "evidence": "test_errors.py secret-not-logged + redact helper tests pass; unhandled handler logs error=redact(str(exc)) and returns only 'internal server error'."
+          },
+          {
+            "key": "production_thinking",
+            "score": 5,
+            "observation": "Every 4xx/5xx carries a stable error.code, human message, and request_id for support correlation; request middleware logs request_id/method/path/status/duration_ms so incidents can be replayed from logs alone; 4xx/5xx split and no-trace rule applied uniformly.",
+            "evidence": "app/main.py access_log middleware + HTTPException/validation/unhandled handlers; test suite covers 400/401/404/429/500 envelopes all carrying request_id."
+          },
+          {
+            "key": "communication_clarity",
+            "score": 4,
+            "observation": "Documented the error contract (code/message/request_id), the redaction rules, and the BREAK-FIX root cause with exact status-code proof in the Module 05 evidence file.",
+            "evidence": "progress/evidence/module-05/evidence.txt records the envelope shape, 4xx/5xx mapping, and the reproduced leak + fix."
+          }
+        ],
+        "strengths": [
+          "Root-caused the stack-trace leak to the exact line (str(exc) passed into error_envelope) instead of wrapping or masking the symptom.",
+          "Kept the fail-closed contract: 500 bodies never contain exception internals, sentinel never leaks, redaction verified by regression tests.",
+          "Closed the loop with a full regression run (35 passed) after the one-line fix."
+        ],
+        "growth_areas": [],
+        "recommendation": "Next module: put Redis in front of the redirect hot path with explicit invalidation on write - the graceful-degradation fallback you chose means cache-down must never surface as a 500, so the read-through path needs a test that proves it.",
+        "public_evidence": [
+          {
+            "artifact": "Unified error envelope + request-correlated logging",
+            "student_action": "Implemented and verified a consistent safe error envelope with stable codes, request_id correlation, and redaction across all 4xx/5xx responses.",
+            "technical_detail": "app/errors.py error_envelope()/error_code_for_status()/redact(); app/main.py request_id+timing middleware and HTTPException/validation/unhandled exception handlers.",
+            "proof": "pytest -q: 35 passed; unhandled RuntimeError returns 500 {code: internal_error, request_id} with no Traceback; sentinel DO_NOT_LOG_ME_123 absent from responses.",
+            "ability": "Operational error handling and observability",
+            "reviewer_value": "Shows the app gives clients a stable error contract and gives operators correlation IDs - the foundation for incident debugging in production.",
+            "confidence": "verified"
+          },
+          {
+            "artifact": "Module 05 BREAK/FIX: stack-trace leak",
+            "student_action": "Diagnosed and fixed a 500 handler that leaked raw exception text, restoring the safe envelope and proving it with the failing-then-passing regression test.",
+            "technical_detail": "app/main.py unhandled_exception_handler; regression guarded by tests/test_errors.py::test_unhandled_error_returns_safe_500.",
+            "proof": "Before fix: 'boom' contained in 500 body. After fix: pytest -q 35 passed with 'boom'/'Traceback' asserted absent.",
+            "ability": "Diagnosing and hardening error paths",
+            "reviewer_value": "Demonstrates a production instinct - the difference between a safe 500 and a leaky one is exactly what separates demo code from shippable services.",
+            "confidence": "verified"
+          }
+        ],
+        "student_knowledge": {
+          "terminology_gaps": [],
+          "concepts_demonstrated": [
+            {
+              "concept": "error envelope with stable codes + request_id",
+              "evidence": "error_envelope() used by all handlers; tests assert code/message/request_id on 400/401/404/429/500"
+            },
+            {
+              "concept": "graceful degradation vs fail-fast split",
+              "evidence": "module_05 decision B: external deps degrade, validation stays fail-fast"
+            },
+            {
+              "concept": "secrets never logged",
+              "evidence": "sentinel DO_NOT_LOG_ME_123 absent from response; redact helper test passes"
+            }
+          ],
+          "teaching_approaches": [
+            {
+              "concept": "error envelope",
+              "approach": "example",
+              "detail": "built and verified envelope via handler tests",
+              "effective": true
+            }
+          ],
+          "effective_level": "intermediate",
+          "learning_style_signals": ["hands-on_verification"],
+          "confidence_level": "high"
+        }
+      }
+    }
+  ]
+}

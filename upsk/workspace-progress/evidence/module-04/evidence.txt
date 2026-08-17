@@ -1,0 +1,36 @@
+MODULE 04 BUILD — TOOLBOX (profiling evidence)
+
+Bug #6 (memory leak / unclosed connections):
+- Probe: tracemalloc running inside the app process via TestClient; 50-request
+  warmup then two 500-request batches (1050 total) against GET /links.
+  Result: no growing DB-connection objects. Top allocations stayed ~0.2-0.5MB
+  (import machinery, anyio/asyncio internals) and grew only ~2MB total from
+  TestClient harness noise; no linear upward trend, no Connection/Pool entries.
+- Why: app/database.py get_db() closes the Session in a finally block
+  (db.close() runs on success AND error), and analytics.py insert_click/
+  purge_old_clicks/analytics_for_link all close sessions in finally. So the
+  canonical 'release only on success' leak is structurally absent here.
+- The one remaining acquire-without-guaranteed-release pattern in this fork was
+  in services/cache.py: every function created an aioredis client and called
+  aclose() only on the happy path; any exception (e.g. Redis down) leaked the
+  client until GC. Fixed: all three cache functions now create the client once
+  and close it in a finally block, so the connection is released on every path.
+  Verified with probe_conn_leak.py (CLIENT LIST stays at baseline across 5
+  forced error-path rounds) and the full suite (74 tests green).
+- Follow-up evidence: probe_memory.py after fix still flat.
+
+Bug #7 (N+1 query on /links):
+- Probe: SQLAlchemy before_cursor_execute listener attached to the engine,
+  GET /links?limit=50 with a valid token.
+  Result: exactly 3 statements fired — SELECT user, SELECT count(*),
+  SELECT links (single query with LIMIT). No per-row analytics queries.
+  So the N+1 pattern is absent in this fork: list_links does one count + one
+  page query, and LinkResponse serialization touches no relationships.
+- EXPLAIN ANALYZE on the page query uses the existing ix_links_created_by
+  index path; no sequential scan concern on a 50-row page.
+
+Verification summary:
+- probe_memory.py: no leak growth across 1050 requests.
+- probe_conn_leak.py: Redis connection count flat (1) across 5 error-path rounds.
+- probe_n1.py: /links fires 3 SQL statements (not 51).
+- pytest: 74 tests, exit 0.

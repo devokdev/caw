@@ -1,0 +1,7 @@
+{
+  "summary": "Module 02 FIX: log injection vulnerability closed. Root cause: user-controlled long_url reached the log stream and, because control characters were not escaped at the logging boundary, an attacker could embed a newline plus crafted JSON inside a URL to forge a second, convincing log line (the fake 'admin login successful'). Fix applied at the boundary in app/main.py: _log now sanitizes every field through _sanitize() which strips control characters (regex [\\x00-\\x1f\\x7f]) from string values before the structured log line is emitted, so a newline in a URL becomes a literal space and cannot terminate the line or create a forged event. Regression guard: added tests/test_log_injection.py which feeds the exact payload from the incident (URL with \\n + crafted admin-login JSON) into _log and asserts the output is a single JSON line with the url value free of newlines - the forged fragment can no longer appear as its own log entry.",
+  "evidence": [
+    "tests/test_log_injection.py: payload 'https://normal-url.com\\n{\"ts\"...\"admin login successful\"...}' -> _log output parsed as one JSON record, url field contains no \\n/\\r and single-line; forged admin entry absent.",
+    "Full suite exit code 0 (no failures) after the change; log-injection regression test passes."
+  ]
+}

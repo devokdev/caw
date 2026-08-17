@@ -1,0 +1,11 @@
+{
+  "summary": "Implemented cache-aside with Redis (Module 05 decision B graceful degradation): cache service with get/set/invalidate_redirect_target, wired redirect hot path (first hit DB + populate, second served from cache), wired PATCH/DELETE to invalidate the cached key. Added protocol=2 so redis-py works with the local Redis 5 server. Verified end-to-end: create->redirect x2->update->redirect, plus Redis-down drill.",
+  "evidence": [
+    "create link 82UNDX -> first redirect 302 https://before.example/x (DB miss, cache populated), second redirect 302 same URL (cache hit, key redirect:abc123 present in Redis with TTL)",
+    "PATCH link long_url -> redirect immediately returned 302 https://after.example/y proving cache invalidation on update (no stale data served)",
+    "Redis down drill: stopped redis-server, redirected /r/def456 -> 302 https://example.org/another via DB fallback, then restarted Redis",
+    "redis-py 8 defaults to RESP3 HELLO which Redis 5 rejects; set protocol=2 in cache client so caching actually works instead of silently falling back",
+    "full regression: 35 passed"
+  ],
+  "artifacts": ["api/app/services/cache.py", "api/app/routers/redirect.py", "api/app/routers/links.py"]
+}

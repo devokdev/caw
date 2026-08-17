@@ -1,0 +1,11 @@
+{
+  "summary": "Module 6 REFLECT complete. Cache strategy: cache-aside (chosen A) on the redirect hot path with explicit invalidation on update/delete. New failure mode introduced by caching: stale data served after a missed invalidate (the exact bug fixed - DELETE path). Mitigations: TTL safety net, graceful DB fallback when Redis is down, and regression tests. Checkpoint demo: cache hit on second redirect, invalidation on update, Redis-down fallback all verified. Module evaluation report submitted.",
+  "evidence": [
+    "report submitted (events inserted: 1) for module 6 module_evaluation",
+    "decision callback: cache-aside control = responsibility; forgetting one invalidate breaks correctness silently",
+    "knowledge check: (1) module solves latency on the read-dominated redirect path, (2) biggest impact = cache invalidation strategy, (3) evidence = cache-hit 2nd redirect + update invalidation + redis-down fallback + 38 tests",
+    "risk named: concurrency spikes can still overload DB on cache-miss stampede; mitigation: coalescing/limits",
+    "full regression suite green: 38 passed"
+  ],
+  "artifacts": ["api/app/services/cache.py", "api/app/routers/links.py", "api/tests/test_cache_invalidation.py"]
+}

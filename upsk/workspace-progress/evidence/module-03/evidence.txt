@@ -1,0 +1,23 @@
+REPRODUCTION EVIDENCE — Module 3 (Debugging & Incident Response)
+
+1) Concurrent redirect repro (canonical shape, fork-adapted) — 4 runs at CONCURRENCY=10 on one short link:
+   Results: 10 redirects, 0 errors, 0 other ([])  [x4]
+   => redirect/click path produces no constraint violations (already atomic).
+
+2) Server log scan during runs for "analytics_link_id_bucket_unique", "duplicate key", "IntegrityError":
+   no matches.
+
+3) Deterministic reproduction of the check-then-act race that IS present (code generation, unique links.code):
+   forced identical first candidate across two concurrent creators:
+   ('OK', 'aaaaaa')
+   ('INTEGRITY', 'duplicate key value violates unique constraint "links_code_key"')
+   => identical failure class as the module's log line, reproduced deterministically.
+
+4) Fix: links_service.create_link now inserts with retry-on-IntegrityError (no SELECT pre-check);
+   unique constraint arbitrates. Rerun of the same repro:
+   ('OK', '8lLu6L')
+   ('OK', 'uMOMDh')
+   RACE ELIMINATED: both concurrent creators succeeded with distinct codes
+
+5) Full test suite: 72 tests passed, exit code 0.
+6) Live redirect repro after fix + server restart: 10 redirects, 0 errors.

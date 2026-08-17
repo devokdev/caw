@@ -1,0 +1,9 @@
+{
+  "summary": "Module 7 CONTEXT: Background Jobs & Analytics. (1) If the queue is down, the redirect must still succeed - consistent with Module 5 decision B (graceful degradation). Analytics is best-effort; a queue outage degrades analytics freshness, never redirect correctness. The click record is dropped or buffered with an error logged, but the hot path never blocks on the queue. (2) Idempotency key for a click event: a unique event id generated at redirect time (per-request UUID stored as the event key with a unique constraint), so a retry of the same enqueue cannot double-count. Secondary guard: the event row dedupes on (link_id, ip_hash, clicked_at) so replaying the same click from the same client in the same instant is counted once.",
+  "evidence": [
+    "queue-down behavior: redirect returns 302 regardless; click recording falls back to log-only or direct write without blocking",
+    "idempotency: per-request event UUID as unique key + dedupe constraint on (link_id, ip_hash, clicked_at)",
+    "ties to prior decisions: Module 5 graceful-degradation B applies directly to the queue dependency"
+  ],
+  "artifacts": []
+}

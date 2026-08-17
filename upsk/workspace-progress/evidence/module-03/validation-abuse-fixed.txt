@@ -1,0 +1,10 @@
+400  javascript:alert(1)
+400  JaVaScRiPt:alert(1)
+400   javascript:alert(1) 
+400  data:text/html,<svg/onload=alert(1)>
+400  //evil.example.com
+400  http:%2f%2fevil.example.com
+400  http%3A%2F%2Fevil.example.com
+400  http:\\evil.example.com
+400  https://good.com@evil.example.com
+400  https://exa\nmple.com

@@ -1,0 +1,9 @@
+{
+  "summary": "VERIFY responses: (1) Cache invalidation is hard because the cache is a separate copy that can drift from the source of truth - every write path (update, delete, expiry) must also evict the key, and a single missed path serves stale data; TTL is the safety net, and multi-instance deployments make partial invalidation worse. (2) Caching auth-protected data risks cross-user leakage and serving data after permission revocation - so we only cache public redirect targets (code->long_url), never owner-scoped rows, keeping cache keys identity-free. (3) If Redis is unavailable we degrade gracefully (Module 05 decision B): skip the cache, read through to Postgres, log the degradation - the redirect never blocks on cache health.",
+  "evidence": [
+    "cache scope restricted to public redirect targets only; no auth-protected data cached - verified by design review of cache.py + redirect.py",
+    "Redis-down drill executed: stopped redis-server, /r/def456 still returned 302 via DB fallback, Redis restarted after",
+    "invalidation wired into PATCH and DELETE; update test proved stale data is never served (redirect returned new URL immediately)"
+  ],
+  "artifacts": ["api/app/services/cache.py", "api/app/routers/redirect.py", "api/app/routers/links.py"]
+}
