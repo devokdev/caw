@@ -1,0 +1,41 @@
+{
+  "idor_bob_invites": [
+    403,
+    "team admin required"
+  ],
+  "idor_bob_list": [
+    403,
+    "team admin required"
+  ],
+  "owner_create": [
+    201,
+    "pending"
+  ],
+  "dup_pending": [
+    409,
+    "an invitation is already pending for this user"
+  ],
+  "owner_revoke": [
+    204
+  ],
+  "accept_revoked": [
+    400,
+    "invitation not found, expired, or already used"
+  ],
+  "accept_1": [
+    200,
+    {
+      "team_id": 91,
+      "user_id": 2,
+      "role": "member"
+    }
+  ],
+  "accept_2_replay": [
+    400,
+    "invitation not found, expired, or already used"
+  ],
+  "bob_revoke": [
+    403,
+    "team owner required"
+  ]
+}
