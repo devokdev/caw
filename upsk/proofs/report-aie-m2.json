@@ -1,0 +1,74 @@
+{
+  "nonce": "QJ298LpDWFAi7PqMo9uZ5",
+  "events": [
+    {
+      "module": 2,
+      "step": "reflect",
+      "event_type": "module_evaluation",
+      "data": {
+        "narrative": "Decomposed the one-sentence Team Collaboration spec into atomic tasks, built the data model via an AI agent, surfaced a real decomposition bug in the Task 2 prompt (plan assumptions vs actual output), and fixed the process with explicit interface contracts embedded verbatim into prompts.",
+        "overall": 5,
+        "dimension_scores": [
+          {
+            "key": "prompt_quality",
+            "score": 5,
+            "observation": "Task 1 prompt pinned types, lengths, nullability, FK targets, and acceptance criteria so the agent produced first-pass-correct output with zero iterations. Corrected Task 2 prompt embedded the interface contract verbatim.",
+            "evidence": "Task 1: 75 tests green, schema verified in DB; Task 2 re-run audit found 0 divergences."
+          },
+          {
+            "key": "review_thoroughness",
+            "score": 5,
+            "observation": "Reviewed agent output by reading all three generated files plus main.py wiring, then verified via live TestClient against all 7 acceptance criteria, not just a test count.",
+            "evidence": "live_teams_check.py: 201/201/200/200/204; 403/404/409/400/401 paths confirmed by corrected re-run."
+          },
+          {
+            "key": "iteration_efficiency",
+            "score": 5,
+            "observation": "Recognized the BREAK conflict as a prompt defect (not code), applied the interface contract once, and the corrected re-run needed zero further iterations.",
+            "evidence": "One contract write resolved all divergence; no iteration spiral."
+          },
+          {
+            "key": "engineering_judgment",
+            "score": 5,
+            "observation": "Correctly decided the fix belonged in Task 2's prompt (Task 1 was well-specified and built the rich model) and adopted a preventative rule: post-Task-1 prompts embed the upstream task's actual output, never plan assumptions.",
+            "evidence": "interface-contract-m2.md records the decision and the rule."
+          },
+          {
+            "key": "final_quality",
+            "score": 4,
+            "observation": "Shipped working, live-verified code with correct role semantics and duplicate handling, but the module's team feature lacks automated tests in the repo (instructed not to add them).",
+            "evidence": "75 tests collected, exit 0; no team test file present in tests/."
+          },
+          {
+            "key": "postmortem_quality",
+            "score": 4,
+            "observation": "The BREAK finding was documented precisely (owner_id vs created_by, flat vs join-table) with a conscious fix placement decision, but the write-up is in the proof rather than a standalone incident artifact.",
+            "evidence": "proof-aie-m2-break.json + interface-contract-m2.md."
+          }
+        ],
+        "strengths": [
+          "Decomposed 'add team invitations' into six atomic subtasks plus an edge-case matrix before prompting.",
+          "Caught the decomposition bug (plan-vs-output schema conflict) and fixed the process with interface contracts, not a code patch.",
+          "Verified agent output independently with live endpoint checks against DB state rather than trusting agent self-reports.",
+          "Correctly rejected the agent's miscounted '75/76' framing by running --collect-only to confirm the real number."
+        ],
+        "growth_areas": [
+          "Add automated tests for the team/membership endpoints in a future module task (grader-hidden tests are the only coverage right now).",
+          "Promote the BREAK write-up into a standalone postmortem artifact with owner-backed follow-ups."
+        ],
+        "recommendation": "Carry the interface-contract discipline into Module 3: every prompt must embed the actual schema/contract of the code it builds against, and the Context Triangle will now need to feed that contract into each delegation.",
+        "public_evidence": [
+          {
+            "artifact": "Team data model + membership API",
+            "student_action": "Directed an AI agent to build the team schema and membership endpoints, then audited the output against a written interface contract and verified every endpoint live.",
+            "technical_detail": "Added models.py Team/TeamMember/Invitation, migrate.py DDL, team_router.py (5 endpoints), teams_service.py (role checks + IntegrityError handling), schemas/team.py; wired router in main.py.",
+            "proof": "75 tests green; DB shows teams/team_members/invitations + uq_team_members_team_user + invitations_token_key; TestClient 201/201/200/200/204 across create/add/list/role/delete.",
+            "ability": "AI-assisted task decomposition and interface contracts",
+            "reviewer_value": "Shows an engineer who treats AI output as code that must pass a written interface contract and live verification, not as 'the agent said it works'.",
+            "confidence": "verified"
+          }
+        ]
+      }
+    }
+  ]
+}
