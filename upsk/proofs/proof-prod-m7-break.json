@@ -1,0 +1,9 @@
+{
+  "summary": "Completed Module 7 BREAK for Production Readiness: diagnosed Scenario A (Stale Runbook / Config Drift) where container renaming caused command failures during 3 AM triage.",
+  "evidence": [
+    "Diagnosed container naming drift and documented root cause in artifacts/runbooks/module-07-break.md."
+  ],
+  "artifacts": [
+    "artifacts/runbooks/module-07-break.md"
+  ]
+}

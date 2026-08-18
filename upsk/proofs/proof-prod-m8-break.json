@@ -1,0 +1,9 @@
+{
+  "summary": "Completed Module 8 BREAK for Production Readiness: identified and diagnosed all 3 production anomalies (shallow schema/permission divergence causing business 500s despite green /ready, unbounded in-memory collection memory leak, and manual environment config drift).",
+  "evidence": [
+    "Published comprehensive 3-point diagnostic report in artifacts/deployment/module-08-break.md."
+  ],
+  "artifacts": [
+    "artifacts/deployment/module-08-break.md"
+  ]
+}

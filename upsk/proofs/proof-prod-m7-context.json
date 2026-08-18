@@ -1,0 +1,9 @@
+{
+  "summary": "Completed Module 7 CONTEXT for Production Readiness: cataloged full environment and dependency inventory and established exact 3 AM triage commands for error rate alert response.",
+  "evidence": [
+    "Drafted precise 3 AM operational checklist in artifacts/runbooks/module-07-context.md."
+  ],
+  "artifacts": [
+    "artifacts/runbooks/module-07-context.md"
+  ]
+}

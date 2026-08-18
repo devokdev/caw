@@ -1,0 +1,10 @@
+{
+  "summary": "Completed Module 6 BREAK for Production Readiness: diagnosed Failure A (Runaway Retry Loop) causing event loop starvation and high CPU spikes due to unbound retry counter and missing backoff caps.",
+  "evidence": [
+    "Isolated unbounded retry loop mechanics in artifacts/resilience/module-06-break.md.",
+    "Engineered remediation with max_retries=3, max_delay=2000ms, and randomized jitter."
+  ],
+  "artifacts": [
+    "artifacts/resilience/module-06-break.md"
+  ]
+}

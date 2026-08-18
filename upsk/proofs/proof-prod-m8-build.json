@@ -1,0 +1,9 @@
+{
+  "summary": "Completed Module 8 BUILD for Production Readiness: engineered production deployment workflow with immutable git SHA tags, implemented hardened liveness and deep readiness endpoints with explicit timeouts, automated post-deploy smoke test gating, and verified sub-2-second automated rollback execution.",
+  "evidence": [
+    "Published deployment pipeline and rollback verification in artifacts/deployment/module-08-build.md."
+  ],
+  "artifacts": [
+    "artifacts/deployment/module-08-build.md"
+  ]
+}

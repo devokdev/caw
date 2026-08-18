@@ -1,0 +1,123 @@
+{
+  "nonce": "NpJDS_nORLMRcfd1is_lq",
+  "events": [
+    {
+      "module": 5,
+      "step": "reflect",
+      "event_type": "module_evaluation",
+      "data": {
+        "narrative": "The student built a 13-row failure mode analysis document, then actually broke the system three times - stopped the database, blocked it with a table lock, and flipped the primary read-only - documenting what really happened each time rather than guessing. The read-only primary drill surfaced a failure mode missing from their table (partial read/write split), which they then handled with a real 503 + statement_timeout fix and re-simulated to prove it worked.",
+        "overall": 5,
+        "dimension_scores": [
+          {
+            "key": "containerization_quality",
+            "score": 4,
+            "observation": "Ran all failure drills against the live compose stack without destabilizing the container topology; the DB-injection approach (ALTER SYSTEM + reload) meant no rebuild needed for simulation.",
+            "evidence": "Read-only injection via `ALTER SYSTEM SET default_transaction_read_only = on` + `pg_reload_conf()` with no container changes; verified restore off + reload."
+          },
+          {
+            "key": "pipeline_design",
+            "score": 4,
+            "observation": "Kept the failure analysis attached to the real deploy artifact (compose stack on postgres/redis) so every simulation exercised the actual production path.",
+            "evidence": "Simulations ran against linkops-postgres/redis containers; final healthy state re-verified (redirect 302, /live 200, /ready 200)."
+          },
+          {
+            "key": "observability_coverage",
+            "score": 5,
+            "observation": "Used the observability pillars built in Module 4 to diagnose each injected failure - structured logs with request_id carried the read-only and statement-timeout errors.",
+            "evidence": "Log lines: `database write rejected: primary unavailable or read-only (transient)` with error_type=ReadOnlySqlTransaction and request_id f39ef018; `canceling statement due to statement timeout` with request_id 644c72da."
+          },
+          {
+            "key": "failure_thinking",
+            "score": 5,
+            "observation": "Enumerated 13 failure modes (not just the obvious down cases), classified transient vs permanent, ranked by risk, and discovered a genuinely new mode - read-only primary - from the live BREAK drill.",
+            "evidence": "DNS surfaced from a live drill ('could not translate host name'); slow-DB proven more dangerous than down (14.7s hang vs 4s fast fail); new row added for read-only primary with probability/impact/handling."
+          },
+          {
+            "key": "degradation_design",
+            "score": 5,
+            "observation": "Converted the top-risk unbounded hang into a bounded failure with statement_timeout=2000 and gave the read-only write path a safe 503 with Retry-After instead of a 500.",
+            "evidence": "Re-simulation: blocked query aborted in 2.1s (was indefinite); write returned 503 database_unavailable with Retry-After: 5 (was generic 500 with leaked SQL trace)."
+          },
+          {
+            "key": "documentation_quality",
+            "score": 5,
+            "observation": "Produced a complete failure-mode-analysis.md with dependency inventory (timeout audit), 13-row failure table, three documented simulations with before/after tables, and the implemented fix.",
+            "evidence": "caw/upsk/proofs/failure-mode-analysis-m5.md includes Chunk 4 with re-simulation tables showing before vs after behavior for both the read-only and slow-DB fixes."
+          }
+        ],
+        "strengths": [
+          "Actually broke the system three times and recorded what happened - stopping postgres revealed the DNS layer ('could not translate host name') that the table had missed.",
+          "Proved 'slow is more dangerous than down' empirically with a 14.7s hang from an ACCESS EXCLUSIVE lock, then fixed it with statement_timeout=2000 and re-proved a 2.1s bounded failure.",
+          "Diagnosed the injected read-only primary (reads work, writes fail) from symptom to root cause, implemented a specific 503 handling, and re-simulated to verify before-and-after behavior."
+        ],
+        "growth_areas": [],
+        "recommendation": "In Module 06 carry the 503/Retry-After decision into a real retry-with-backoff layer and a circuit breaker for the slow-DB path - the timeout is in place, but clients still see errors rather than a transparent degraded mode.",
+        "public_evidence": [
+          {
+            "artifact": "failure-mode-analysis-m5.md (caw/upsk/proofs)",
+            "student_action": "Authored a 13-row failure mode analysis with a dependency inventory timeout audit, transient/permanent classification, and three live simulation drills.",
+            "technical_detail": "Postgres connect_timeout=5/pool_pre_ping, Redis socket_timeout=0.5 with graceful fallback, DNS with no control, filesystem with no rotation - 6 of 13 rows had no current handling.",
+            "proof": "Document contains Chunk 3 Simulation 1 (db stop: /ready 503 in 8.0s, /r 500 in 4.0s) and Simulation 2 (lock: >15s hang, 14.7s observed).",
+            "ability": "Systematic failure mode enumeration and prioritization.",
+            "reviewer_value": "Shows the discipline that turns 'hope it works' into a prioritized, testable list of failure behaviors - the core of senior production engineering.",
+            "confidence": "verified"
+          },
+          {
+            "artifact": "api/app/database.py + api/app/main.py (503 handling)",
+            "student_action": "Added statement_timeout=2000 to the Postgres engine and an InternalError exception handler returning 503 database_unavailable with Retry-After.",
+            "technical_detail": "connect_args options now '-c timezone=UTC -c statement_timeout=2000'; handler logs error_type (ReadOnlySqlTransaction) with request_id and returns error envelope without stack traces.",
+            "proof": "Re-simulation: read-only primary -> POST /links returns 503 {code:database_unavailable} + Retry-After: 5; slow DB -> QueryCanceled after 2.1s (was unbounded hang).",
+            "ability": "Graceful degradation and bounded-failure design.",
+            "reviewer_value": "Directly addresses the top production risk (pool-exhaustion cascade) and converts an ambiguous 500 into an actionable transient status.",
+            "confidence": "verified"
+          },
+          {
+            "artifact": "Failure drills (DB stop, DB lock, read-only primary)",
+            "student_action": "Simulated all three failures against the live stack and documented actual vs expected behavior, then restored and re-verified health.",
+            "technical_detail": "docker stop/start linkops-postgres; ACCESS EXCLUSIVE lock via background psql; ALTER SYSTEM default_transaction_read_only toggle + reload.",
+            "proof": "Statuses captured: 503/500 (down), >15s hang (slow), 500 then 503 (read-only write), all restored to 302/200/200.",
+            "ability": "Failure injection and incident drill execution.",
+            "reviewer_value": "Proves the student tests their assumptions about failure behavior instead of guessing - the entire point of the module.",
+            "confidence": "verified"
+          }
+        ],
+        "student_knowledge": {
+          "terminology_gaps": [],
+          "concepts_demonstrated": [
+            {
+              "concept": "fail-open-vs-fail-closed",
+              "evidence": "Chose fail_open default, refined per dependency: DB fail_closed (never fabricate redirects), cache/broker/rate-limit fail_open."
+            },
+            {
+              "concept": "transient-vs-permanent",
+              "evidence": "Classified connection-refused/lock/failover as transient (retry), missing-table/bad-creds as permanent (fail fast, never retry)."
+            },
+            {
+              "concept": "slow-vs-down",
+              "evidence": "Proved empirically with lock drill: down fails fast/loud (4s 503/500), slow hangs silently (14.7s+, no timeout)."
+            },
+            {
+              "concept": "statement-timeout",
+              "evidence": "Added statement_timeout=2000; re-simulated lock -> 2.1s QueryCanceled bounded failure."
+            }
+          ],
+          "teaching_approaches": [
+            {
+              "concept": "failure-mode-analysis",
+              "approach": "example",
+              "detail": "Live failure injection drills with documented before/after",
+              "effective": true
+            }
+          ],
+          "effective_level": "intermediate",
+          "learning_style_signals": [
+            "structured_matrices",
+            "empirical_verification"
+          ],
+          "confidence_level": "high"
+        }
+      }
+    }
+  ]
+}
