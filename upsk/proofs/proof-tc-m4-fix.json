@@ -1,0 +1,12 @@
+{
+  "summary": "Remediated the postmortem to eliminate all blame, establish systemic root cause, and convert all action items to verifiable system and tooling changes.",
+  "evidence": [
+    "Zero individual names referenced throughout the document; all actions attributed to roles and processes.",
+    "Systemic root cause rigorously defined around silent exception suppression and transactional decoupling.",
+    "Translated all human-behavior 'be more careful' wishes into automated system guarantees (CI config backward-compatibility linter, transactional assertions, domain metric alerting, weekly automated rollback dry-runs).",
+    "All action items contain specific owner roles, strict deadlines, and concrete definitions of done."
+  ],
+  "artifacts": [
+    "postmortem-remediated.md"
+  ]
+}

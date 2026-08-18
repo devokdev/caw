@@ -1,0 +1,63 @@
+{
+  "nonce": "bqFgeSzVVPFx3uH1knsot",
+  "events": [
+    {
+      "module": 5,
+      "step": "reflect",
+      "event_type": "module_evaluation",
+      "data": {
+        "narrative": "Exemplary demonstration of Tech Lead-level cross-functional communication, successfully translating high-stakes payment architecture tradeoffs into concise business decisions and identifying critical hidden operational risks in infrastructure proposals.",
+        "overall": 5,
+        "dimension_scores": [
+          {
+            "key": "review_quality",
+            "score": 5,
+            "observation": "Identified all 22 instances of undefined jargon in Marcus's migration email and extracted the buried Black Friday risk with precision.",
+            "evidence": "Surfaced that Istio memory overhead without headroom validation threatened cluster failure and checkout timeouts during peak traffic."
+          },
+          {
+            "key": "writing_clarity",
+            "score": 5,
+            "observation": "Framed every paragraph around a single objective, eliminating passive voice and technical padding.",
+            "evidence": "Opening sentence delivered direct business impact: 'We need to shift the public launch date of our subscription service by 3 weeks, from November 15 to December 6.'"
+          },
+          {
+            "key": "audience_awareness",
+            "score": 5,
+            "observation": "Translated complex payment tokenization into intuitive concepts without dumbing down technical substance.",
+            "evidence": "Utilized the digital ticket stub and unexpiring hotel key card analogy to communicate token replay risk to Product and Marketing leaders."
+          },
+          {
+            "key": "structure_quality",
+            "score": 5,
+            "observation": "Maintained strict top-down hierarchy: Executive Summary -> Issue & Risk -> Timeline & Resources -> Concrete Asks.",
+            "evidence": "Separated technical risk, resource duration, and leadership asks into dedicated visual sections."
+          },
+          {
+            "key": "actionability",
+            "score": 5,
+            "observation": "Transformed vague conversational closings into explicit, dated, and scoped decisions.",
+            "evidence": "Specified three distinct asks including formal Product date approval, Marketing announcement alignment, and a 30-minute sync this Thursday at 2:00 PM EST."
+          }
+        ],
+        "strengths": [
+          "Demonstrates master-level ability to preserve technical accuracy while speaking fluent business impact.",
+          "Identifies and surfaces hidden failure modes in engineering proposals that would otherwise escape non-technical executives."
+        ],
+        "growth_areas": [],
+        "recommendation": "Maintain this standard of executive memo framing when advocating for platform tech debt investments.",
+        "public_evidence": [
+          {
+            "artifact": "stakeholder-memo.md",
+            "student_action": "Authored an executive stakeholder memo explaining technical security delay and aligning cross-functional release dates.",
+            "technical_detail": "Drafted payment security vulnerability delay memo for VP of Product and Head of Marketing, translating token replay vulnerabilities into plain-language business impact.",
+            "proof": "stakeholder-memo.md",
+            "ability": "stakeholder-management",
+            "reviewer_value": "Proves executive communication maturity necessary for Staff+ and Tech Lead roles leading complex organizational technical initiatives.",
+            "confidence": "verified"
+          }
+        ]
+      }
+    }
+  ]
+}

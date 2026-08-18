@@ -1,0 +1,12 @@
+{
+  "summary": "Authored stakeholder memo communicating a 3-week subscription launch delay to fix a high-severity payment security vulnerability.",
+  "evidence": [
+    "Opened directly with business and timeline impact (3-week delay from Nov 15 to Dec 6) in the first sentence.",
+    "Translated technical terms (tokenization, token replay) using plain language and the digital ticket stub / hotel key card copy analogy.",
+    "Framed the tradeoff between launch timeliness and catastrophic security/brand breach clearly.",
+    "Concluded with a concrete 3-part ask (Product approval, Marketing timeline adjustment, and a specific 30-minute sync time on Thursday at 2:00 PM EST)."
+  ],
+  "artifacts": [
+    "stakeholder-memo.md"
+  ]
+}

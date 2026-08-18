@@ -1,0 +1,13 @@
+{
+  "summary": "Completed self-check verification for Module 4 postmortem against blameless criteria, systemic root cause, and concrete action items.",
+  "evidence": [
+    "Root cause names error handling and transactional decoupling, not individuals.",
+    "Zero action items rely on 'be more careful'; all 4 action items require verifiable system and automation changes.",
+    "Monitoring action item specifies exact orders-per-minute metric, >3m zero threshold, and Datadog/PagerDuty channel.",
+    "Included 4 distinct contributing factors.",
+    "All action items have assigned roles, target dates, and concrete definitions of done."
+  ],
+  "artifacts": [
+    "postmortem-orderprocessor.md"
+  ]
+}

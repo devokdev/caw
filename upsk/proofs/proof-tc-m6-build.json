@@ -1,0 +1,13 @@
+{
+  "summary": "Authored 3 AM Incident Runbook for the OrderFlow service.",
+  "evidence": [
+    "Defined clear single-source-of-truth service variables and team contacts at the top.",
+    "Built a 0-30s triage decision matrix linking symptoms directly to recovery paths.",
+    "Formatted all recovery workflows into strictly numbered steps with 100% copy-pasteable terminal commands.",
+    "Included concrete decision branches for API crashes, Celery worker stalls, PostgreSQL pool saturation, and emergency Helm rollbacks.",
+    "Established a 15-minute escalation protocol with pre-formatted Slack templates and PagerDuty routing."
+  ],
+  "artifacts": [
+    "runbook-orderflow.md"
+  ]
+}

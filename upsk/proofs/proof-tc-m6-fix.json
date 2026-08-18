@@ -1,0 +1,12 @@
+{
+  "summary": "Completed Module 6 FIX by surgically remediating all errors in the OrderFlow runbook.",
+  "evidence": [
+    "Replaced all occurrences of DB_CONNECTION_STRING with DATABASE_URL in psycopg2 and printenv checks.",
+    "Replaced faulty helm upgrade --set image.tag=latest with true helm rollback orderflow --namespace production command.",
+    "Inserted dedicated Step 4 covering Redis reachability, Celery worker status, and refund impact.",
+    "Added 'Last verified' metadata header and structured Known Failure Modes troubleshooting table."
+  ],
+  "artifacts": [
+    "runbook-orderflow-fixed.md"
+  ]
+}

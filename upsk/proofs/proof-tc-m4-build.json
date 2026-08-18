@@ -1,0 +1,14 @@
+{
+  "summary": "Authored complete blameless postmortem for OrderProcessor v2.14 silent order drop incident.",
+  "evidence": [
+    "Summary paragraph covers exact revenue impact ($186k), order count (1400), duration (1h 34m), and mechanism.",
+    "Combined chronological timeline and rigorous 5-whys root cause analysis reaching systemic design failures.",
+    "Systemic root cause defined around silent exception suppression and decoupling HTTP status from database persistence.",
+    "Identified 4 distinct contributing factors including schema divergence, missing domain metrics, and stale rollback scripts.",
+    "Action items specify strict roles (no individuals), firm deadlines, and precise Definitions of Done.",
+    "Zero individual names used anywhere in the document."
+  ],
+  "artifacts": [
+    "postmortem-orderprocessor.md"
+  ]
+}

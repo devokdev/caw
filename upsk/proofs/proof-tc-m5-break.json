@@ -1,0 +1,11 @@
+{
+  "summary": "Completed Break exercise analyzing Marcus's flawed stakeholder communication email.",
+  "evidence": [
+    "Conducted sentence-by-sentence audit identifying 22 distinct undefined jargon terms and metrics.",
+    "Extracted and stated the buried Black Friday memory exhaustion risk in a single plain sentence for non-technical leadership.",
+    "Formulated 3 concrete asks covering engineer resourcing allocation, infrastructure budget approval, and a specific decision sync meeting."
+  ],
+  "artifacts": [
+    "break-stakeholder-analysis.md"
+  ]
+}
