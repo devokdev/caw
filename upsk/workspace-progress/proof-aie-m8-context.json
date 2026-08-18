@@ -1,0 +1,9 @@
+{
+  "summary": "Module 08 CONTEXT: understood the 'last mile' framing - demo-ready vs production-ready. The four production gates: (1) regression-protecting tests that run in any environment (not just mine), (2) documentation another engineer can follow (RBAC extension path), (3) CI that runs every test on every push with a clear green/red signal and no manual steps, (4) a deployment strategy with rollback plan (what breaks, how fast to roll back, what data is at risk). For this project: tests exist across modules (auth, links, teams, comments, audit, security); docs are partial (interface-contract-m2.md, codebase-summary.md); CI and deployment are the gaps - no pipeline currently runs the full suite on push, and there is no documented rollback path. Ship mode: this module converts reviewed-but-not-proven code into a deployed, CI-protected artifact.",
+  "evidence": [
+    "existing suite: tests/ has 14 files covering auth, links, validation, teams, comments/audit, security regressions (test_module7_security.py, test_module7_role_escalation.py)",
+    "docs: interface-contract-m2.md + codebase-summary.md exist; no README-style onboarding for RBAC extension",
+    "CI gap: no pipeline file present in repo (no .github/workflows for the api)",
+    "deploy gap: Dockerfile + railway.json exist but no documented rollback/verification procedure"
+  ]
+}

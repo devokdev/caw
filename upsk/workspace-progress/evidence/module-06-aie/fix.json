@@ -1,0 +1,13 @@
+{
+  "summary": "Module 6 FIX - closed the integration gap. Root cause: the interface contracts specified what each agent produces (Agent 1 comment events via in-memory eventBus; Agent 3 audit via HTTP middleware) but never specified the canonical data flow between them, so comment.created events were emitted into the void and the middleware classified POST /links/:id/comments by route prefix. Fix applied: comment_service now calls audit_service.record() directly in the same transaction with resourceType='comment' and resourceId=comment.id, carrying link_id in details as context (Option 3, the direct-call path the contract permits). Added the missing SYSTEM-LEVEL INTEGRATION CONTRACT to interface-contract-m2.md (record mechanism, action format, payload requirements, resource type registry).",
+  "evidence": [
+    "live probe: create/update/delete comment id 19 -> audit entries comment.created/comment.updated/comment.deleted all with target_type='comment', target_id=19, details={'link_id': 12734}",
+    "team actions still audited: create team -> GET /teams/{id}/audit shows team.created entry",
+    "full test suite: 113 passed together",
+    "interface-contract-m2.md updated with System-Level Integration Contract"
+  ],
+  "artifacts": [
+    "api/app/services/comment_service.py",
+    "caw/upsk/workspace-progress/interface-contract-m2.md"
+  ]
+}

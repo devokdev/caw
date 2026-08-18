@@ -1,0 +1,15 @@
+{
+  "summary": "Module 08 FIX: made the test suite environment-independent, then proved it by running against a database created ONLY by migrations (simulating CI exactly). Two environment dependencies found and fixed. (1) carol@example.com: test_module7_role_escalation.py (11 tests) and test_module8_permissions.py require a third user that only existed locally because I hand-created her in Module 07; migrate.py seeded only alice+bob. Fix: added carol@example.com/carol-password to DEV_USERS in api/migrations/migrate.py so every fresh database (CI, Docker, new dev) seeds all three users. (2) test_interface_contract.py::test_team_owner_is_not_in_team_members sampled the first 3 rows of the teams table, requiring >=3 pre-existing teams - those only existed from Module 02 development data. On a clean CI database this fails ('cannot sample 3 teams'). Fix: the test now creates its own 3 sample teams in a setup phase (INSERT with alice's seeded id), asserts the owner-not-a-member contract, and deletes them in teardown - no dependency on pre-existing state, no hardcoded IDs. Verification: dropped and recreated upsk_sdf from scratch, ran python migrations/migrate.py (seeds alice+bob+carol), then ran the full pytest suite against that clean database: 157 passed, 0 failed. The suite is now production-grade: it passes on a clean machine with no assumptions about pre-existing data. Lesson internalized: AI writes tests for the context it was generated in; making them context-independent is a human review responsibility - every accepted AI test must be checked for environment assumptions.",
+  "evidence": [
+    "migrate.py DEV_USERS now seeds alice, bob, AND carol - single source of truth for seed data",
+    "test_interface_contract.py owner-not-a-member test now creates its own 3 sample teams (setup) and deletes them (teardown); no pre-existing-state dependency",
+    "full suite on fresh DB (drop + recreate + migrate + pytest): 157 passed, 0 failed",
+    "clean-DB run is exactly the CI path: migrations before pytest, no dev data",
+    "guard codified in module-08-break-trace.md: a test may only reference data the migration seeds or the test itself creates"
+  ],
+  "artifacts": [
+    "api/migrations/migrate.py",
+    "api/tests/test_interface_contract.py",
+    "upsk/workspace-progress/module-08-break-trace.md"
+  ]
+}

@@ -56,3 +56,34 @@ Every task prompt after Task 1 embeds the ACTUAL output of the upstream task
 (exact table names, column names, paths, status codes) — never the plan's
 assumptions. If a task discovers a schema divergence, the prompt is corrected
 first, not the code silently.
+## Module 6 FIX - System-Level Integration Contract
+
+The interface mismatch: Agent 1 (comments) emitted comment.* events into an
+in-memory eventBus; Agent 3 (audit) intercepted via HTTP middleware that
+classified POST /links/:id/comments by route prefix (resourceType 'task'). Two
+correct implementations, no data flow between them. Fix: single canonical
+integration path - the creating/updating/deleting service calls
+audit_service.record() directly in the same transaction, with resourceType
+'comment' and resourceId = comment.id (link id carried in details as context).
+
+SYSTEM-LEVEL INTEGRATION CONTRACT
+=================================
+
+Event/Record mechanism:
+  - All features that create/update/delete resources MUST record audit events
+    via the shared audit_service in the SAME transaction as the mutation.
+  - Event/action format: {resourceType}.{action} e.g. comment.created,
+    team.created, team.member_added, mention.notification.
+  - Record payload MUST include: actor_id, target_type, target_id (the
+    resource's own id). Related resource IDs (e.g. link_id/task_id) go in
+    details as context, NOT as the primary target_id.
+
+Resource Type Registry:
+  - Known resource types: link, team, member(user), invitation, comment,
+    notification.
+  - When adding a new resource type, update the registry and the mapper that
+    decides how a route/resource maps to an audit record.
+
+This system-level contract is what was missing in Module 6. Individual agent
+contracts are necessary but not sufficient; contracts must also describe how
+the system's parts connect.

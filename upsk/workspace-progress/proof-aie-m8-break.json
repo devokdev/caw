@@ -1,0 +1,14 @@
+{
+  "summary": "Module 08 BREAK: diagnosed the 'works on my machine, fails in CI' failure. The symptom: test_module7_role_escalation.py (11 tests) and test_module8_permissions.py reference carol@example.com as a third user; locally all green (147 passed), but in CI the database starts empty and is seeded only by api/migrations/migrate.py, which seeded just alice and bob. Any test needing a non-existent user fails with 'user not found'. Root cause: carol existed on my machine only because I manually created her during Module 07 to prove the viewer/admin/member role boundaries - the tests were then written against a locally-populated database, the exact environment-dependence failure the module describes (the generator saw three users in the DB and assumed all three are always there, with no concept that CI starts from a clean migration). The environment-dependent assumption is precisely 'carol@example.com/carol-password exists'. Fix already applied during BUILD: added carol to DEV_USERS in api/migrations/migrate.py, making the migration the single source of truth for seed data and matching the CI ordering (migrations run before pytest). Guard codified: a test may only reference data the migration seeds or the test itself creates; new fixture users must be added to DEV_USERS first.",
+  "evidence": [
+    "root cause: api/migrations/migrate.py DEV_USERS seeded only alice+bob; carol existed only via manual local DB creation",
+    "impact: test_module7_role_escalation.py and test_module8_permissions.py require carol; CI DB seeded from migrate.py alone -> missing-user failures",
+    "fix: DEV_USERS now includes carol@example.com/carol-password so fresh databases (CI, Docker, new dev) seed all three users",
+    "ordering verified: .github/workflows/ci.yml runs migrations (step) before pytest (next step), so the fix lands before tests in CI",
+    "trace written: module-08-break-trace.md (symptom, root cause, assumption, fix, guard)"
+  ],
+  "artifacts": [
+    "upsk/workspace-progress/module-08-break-trace.md",
+    "api/migrations/migrate.py"
+  ]
+}

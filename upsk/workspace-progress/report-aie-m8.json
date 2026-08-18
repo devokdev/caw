@@ -1,0 +1,88 @@
+{
+  "nonce": "HQvuLO3dBuTNdLBIBKIfI",
+  "events": [
+    {
+      "module": 8,
+      "step": "reflect",
+      "event_type": "module_evaluation",
+      "data": {
+        "narrative": "Final module: the student shipped a production-grade Team Collaboration feature by choosing Option B and then survived the module's capstone CI lesson. They wrote the full permission-boundary matrix (15 tests, deny AND allow), a capstone end-to-end integration test, API/setup/ADR/rollback docs, and verified the ship checklist with live probes (6/6 docs spot-checks, secrets scan clean, search-index plan verified). In BREAK/FIX they discovered two environment-dependent assumptions in AI-era tests (carol@example.com existed only via manual local seeding; the interface-contract test sampled pre-existing teams) and proved the fix by recreating the database from scratch via migrations and running the full suite: 157 passed, 0 failed.",
+        "overall": 5,
+        "dimension_scores": [
+          {
+            "key": "prompt_quality",
+            "score": 5,
+            "observation": "Decomposed the ship work into precise deliverables (test suite, docs, CI, integration test) with explicit acceptance criteria and then executed each part cleanly.",
+            "evidence": "test_module8_permissions.py (15 boundary tests), test_module8_integration.py (single continuous journey), docs/API.md + SETUP.md + ADRs.md + ROLLBACK.md."
+          },
+          {
+            "key": "review_thoroughness",
+            "score": 5,
+            "observation": "Caught the module's planted failure before it hit CI by auditing environment assumptions, and verified every ship-checklist item with evidence rather than assertions.",
+            "evidence": "Found carol@example.com was not seeded by migrations and the interface-contract test required pre-existing teams; verified via a fresh migration-only DB run (157 green)."
+          },
+          {
+            "key": "iteration_efficiency",
+            "score": 5,
+            "observation": "Zero wasted iterations - the two environment-dependence bugs were fixed on first pass each, and the integration test was adapted once to the M7 link-owner comment scoping.",
+            "evidence": "migrate.py DEV_USERS + test_interface_contract.py setup/teardown fixed on first attempt; full suite green on the next run."
+          },
+          {
+            "key": "judgment",
+            "score": 5,
+            "observation": "Chose Option B (Production-Grade) and later recognized the CI failure as the specific cost of that decision - AI tests are written against observable state, so environment assumptions need an explicit check even at a high review bar.",
+            "evidence": "Root-caused the BREAK failure to 'carol existed only because I created her manually in Module 07' and the 3-team sampling dependency, then codified the create-or-migrate guard."
+          },
+          {
+            "key": "final_quality",
+            "score": 5,
+            "observation": "Shipped a tested, documented, CI-integrated feature with a rollback plan; full suite is environment-independent.",
+            "evidence": "157 tests pass against a database created only by migrations; docs spot-checks 6/6; secrets scan clean; CI yml verified including the trigram search-plan gate."
+          }
+        ],
+        "strengths": [
+          "Converted the module's BREAK lesson into a real fix: added carol to migrate.py DEV_USERS and rewrote the interface-contract test to create its own sample teams with teardown - then proved it by running the whole suite on a freshly-migrated database.",
+          "Produced a genuine ship package: permission matrix, capstone integration journey, API/SETUP/ADR/rollback docs, and a VERIFY checklist with live evidence for all seven items.",
+          "Internalized the meta-lesson precisely: 'AI writes tests that pass in the context they were generated in; making them context-independent is a review problem, not a prompting problem.'"
+        ],
+        "growth_areas": [],
+        "recommendation": "Add the environment-independence check ('does this test create everything it references, or is it seeded by migrations?') to the standard test review checklist for every future AI-generated test - it would have caught both BREAK failures before CI.",
+        "public_evidence": [
+          {
+            "artifact": "Team Collaboration test suite + docs",
+            "student_action": "Wrote the 15-test permission-boundary matrix, the end-to-end capstone integration test (create team -> invite -> accept -> comment @mention -> activity feed -> audit log), and API/SETUP/ADR/rollback documentation; fixed two environment-dependent tests so the full suite passes on a migration-only database.",
+            "technical_detail": "api/tests/test_module8_permissions.py, api/tests/test_module8_integration.py, api/migrations/migrate.py DEV_USERS, api/tests/test_interface_contract.py, docs/{API,SETUP,ADRs,ROLLBACK}.md",
+            "proof": "Full pytest run against a freshly recreated+migrated database: 157 passed, 0 failed; live VERIFY spot-checks 6/6 PASS (POST /teams 201 shape, members 201, /audit 200, bad role and empty name -> 400 request_invalid).",
+            "ability": "production-readiness and environment-independent test authoring",
+            "reviewer_value": "Proves the student can take an AI-generated feature from green-on-my-machine to clean-DB CI-green with a ship checklist, rollback plan, and both-direction permission tests.",
+            "confidence": "verified"
+          }
+        ],
+        "student_knowledge": {
+          "terminology_gaps": [],
+          "concepts_demonstrated": [
+            {
+              "concept": "environment independence in tests",
+              "evidence": "Proved by dropping and recreating the DB from migrations then running the full suite: 157 passed."
+            },
+            {
+              "concept": "permission presence vs permission correctness",
+              "evidence": "15-test matrix asserts both allow and deny for admin/member/viewer/owner on every boundary."
+            }
+          ],
+          "teaching_approaches": [
+            {
+              "concept": "ship checklist with evidence",
+              "approach": "example",
+              "detail": "Each of the 7 VERIFY items paired with a concrete live probe or command output.",
+              "effective": true
+            }
+          ],
+          "effective_level": "advanced",
+          "learning_style_signals": ["hands-on_verification", "example"],
+          "confidence_level": "high"
+        }
+      }
+    }
+  ]
+}

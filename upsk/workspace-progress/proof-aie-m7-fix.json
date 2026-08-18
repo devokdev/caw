@@ -1,0 +1,15 @@
+{
+  "summary": "Module 07 FIX (privilege escalation): traced the canonical exploit chain for role mutation (membership-check-only middleware + unvalidated role write) and confirmed this codebase already breaks both links: PATCH /teams/{id}/members/{uid}/role enforces require_owner (stricter than the canonical isTeamMember pattern) and UpdateRoleRequest.role is Literal['admin','member','viewer'] (Pydantic enum), so viewer/member self-promotion is impossible. Why AI misses it: the AI checks the letter of the requirement ('team members can have their roles updated' -> membership check) instead of the spirit (roles exist to gate authority; a viewer granting itself admin is privilege escalation - a security concept about the PURPOSE of roles, which no prompt enumerated). Applied the module's production-grade fix discipline: wrote 11 regression tests pinning the full 13-case threat model - viewer cannot escalate own role (403), viewer/member cannot change another member's role (403), admin cannot change any role in this owner-only design (403), owner can change viewer/member roles (200), owner promotes member to admin (200), owner cannot self-modify (404/403 guard), and superadmin/empty/uppercase role values rejected with 400.",
+  "evidence": [
+    "trace: module-07-break-trace.md documents all three role-write paths (add_member require_owner_or_admin, update_member_role require_owner, accept_invitation hardcoded ROLE_MEMBER) - no path lets a viewer become admin",
+    "live/TestClient probe: PATCH /teams/{tid}/members/{bob_uid}/role {\"role\":\"admin\"} as bob(viewer) -> 403 'team owner required'",
+    "patch: require_owner gate confirmed at team_router.py PATCH /teams/{id}/members/{uid}/role; role enum enforced by UpdateRoleRequest (schemas/team.py:47)",
+    "verify: new tests/test_module7_role_escalation.py - 11 tests covering viewer/member/admin/owner matrix plus invalid role values; 31 tests green (test_teams + escalation)",
+    "cross-check: full security regression suite (test_module7_security.py) still green including comment IDOR, expired-link redirect, /audit team exposure"
+  ],
+  "artifacts": [
+    "api/tests/test_module7_role_escalation.py",
+    "upsk/workspace-progress/module-07-break-trace.md",
+    "upsk/workspace-progress/module-07-security-review.md"
+  ]
+}

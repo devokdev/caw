@@ -1,0 +1,81 @@
+{
+  "events": [
+    {
+      "module": 6,
+      "step": "reflect",
+      "event_type": "module_evaluation",
+      "data": {
+        "narrative": "Ran three agents in parallel (comment threads, @mention parsing + notifications, audit log) on a frozen interface contract, merged their outputs, and verified at three levels. The integration gap surfaced exactly where the module predicted: comment ops were individually correct but never reached the audit log because the contracts specified each agent's outputs, not the system's data flow. Fixed by choosing a single canonical integration path and writing the missing system-level contract.",
+        "overall": 5,
+        "dimension_scores": [
+          {
+            "key": "prompt_quality",
+            "score": 5,
+            "observation": "Interface-first plan with the contract frozen up front; each parallel task prompt embedded the frozen schema/route/error conventions verbatim so agents could not drift from each other.",
+            "evidence": "M6 DECIDE choice A (interface-first); comment/mention/audit prompts built against real app conventions (error_envelope, get_current_user, 400/404/409 codes)."
+          },
+          {
+            "key": "review_thoroughness",
+            "score": 5,
+            "observation": "VERIFY ran all three levels empirically: per-feature CRUD + auth, cross-feature integration (mention->notification, comment->audit), and conflict detection (migrations, naming, full suite together).",
+            "evidence": "Live probe: create/list/update/delete comment (201/200/200/204, unauth 401); bob notifications kinds=['mention']; /audit actions include comment.* and mention.notification; 113 tests green together."
+          },
+          {
+            "key": "iteration_efficiency",
+            "score": 5,
+            "observation": "Features worked on first pass; the single integration defect was closed with one targeted fix (direct audit_service.record call with resourceType=comment) rather than a rebuild.",
+            "evidence": "fix.json: comment.created/updated/deleted all recorded with target_type=comment and correct resourceId after one edit; no iteration spiral."
+          },
+          {
+            "key": "engineering_judgment",
+            "score": 5,
+            "observation": "Diagnosed the mismatch as a contract gap, not a code bug, and selected the direct-call canonical path (service records its own audit event in the same transaction) instead of patching middleware route classification.",
+            "evidence": "System-Level Integration Contract added to interface-contract-m2.md: record mechanism, action format, payload requirements, resource type registry."
+          },
+          {
+            "key": "final_quality",
+            "score": 5,
+            "observation": "Shipped integration is production-ready: comment ops audit-logged with resourceType=comment and correct resourceId, original team audit still correct, full suite green.",
+            "evidence": "Live probe: comment id 19 -> 3 audit entries (created/updated/deleted) all target_type=comment target_id=19; team.created still present; 113 passed."
+          },
+          {
+            "key": "postmortem_quality",
+            "score": 5,
+            "observation": "Captured the root cause as an underspecified system-level contract and documented the fix plus a reusable contract addition, not just a code patch.",
+            "evidence": "interface-contract-m2.md now includes the System-Level Integration Contract preventing this class of parallel-agent conflict."
+          }
+        ],
+        "strengths": [
+          "Caught the integration gap at VERIFY with three-level empirical verification instead of trusting each feature's isolated pass.",
+          "Fixed with the direct-call canonical path (service records audit in the same transaction) - the option the contract explicitly permits.",
+          "Added the missing System-Level Integration Contract (record mechanism, action format, payload requirements, resource type registry)."
+        ],
+        "growth_areas": [
+          "Freeze the data-flow contract (who calls whom, event/record channel) before agents start, not discovered during merge.",
+          "Add a regression test asserting comment audit entries use resourceType=comment so the integration stays enforced."
+        ],
+        "recommendation": "Add an automated regression assertion that every comment mutation produces an audit entry with target_type=comment, so the system-level contract is enforced in CI on every future parallel merge.",
+        "public_evidence": [
+          {
+            "artifact": "Comment/mention/audit parallel features + integration fix",
+            "student_action": "Implemented three parallel-agent features (comment threads, @mention parsing with notifications, audit log) and closed the integration gap so comment operations are audit-logged with resourceType=comment.",
+            "technical_detail": "Added comments/notifications/audit_log tables (idempotent migration), POST/GET/PATCH/DELETE comment routes, /mentions/parse, /notifications, /teams/{id}/audit; audit_service.record() called in the same transaction as each mutation.",
+            "proof": "113 tests pass together; live probe shows comment.created/updated/deleted with target_type=comment, target_id=19, details={'link_id':12734}; bob receives mention notification.",
+            "ability": "Parallel agent management and integration verification",
+            "reviewer_value": "Demonstrates building multiple features concurrently on one codebase and catching the cross-feature integration defect that individual test suites miss.",
+            "confidence": "verified"
+          },
+          {
+            "artifact": "System-Level Integration Contract",
+            "student_action": "Diagnosed the interface mismatch (events emitted into the void vs middleware classifying by route prefix) and wrote the missing system-level contract defining the canonical audit record path and resource type registry.",
+            "technical_detail": "interface-contract-m2.md now specifies record mechanism, {resourceType}.{action} format, required payload fields, and the resource registry (link, team, member, invitation, comment, notification).",
+            "proof": "Contract section 'Module 6 FIX - System-Level Integration Contract' appended and used to guide the fix.",
+            "ability": "Contract design for concurrent engineering",
+            "reviewer_value": "Shows a senior practice: preventing cross-agent integration defects by specifying data flow between components, not just each component's outputs.",
+            "confidence": "verified"
+          }
+        ]
+      }
+    }
+  ]
+}

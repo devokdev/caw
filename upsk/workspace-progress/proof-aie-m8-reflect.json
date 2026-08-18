@@ -1,0 +1,20 @@
+{
+  "summary": "Module 08 REFLECT: full retrospective across all 8 modules. FEATURE COMPLETENESS: the end-to-end journey is verified by the capstone integration test (create team -> invite -> accept -> comment with @mention -> activity feed -> audit log); known limitation documented: this codebase implements the activity feed as polled comment lists + notifications rather than WebSockets (no WS server exists in the project - documented in ADRs, not silently implied). QUALITY (1-5, all 5): Security 5 (M7 endpoint map, IDOR + /audit PII fixed and regression-tested, owner-only role changes, enum-validated roles, 15-test deny+allow matrix, env-loaded secrets); Maintainability 5 (consistent FastAPI router pattern, single-responsibility services, audit in same transaction as action, M6 integration contract prevents drift); Test Coverage 5 (every endpoint, every boundary both directions, M4 edge cases, environment-independent - proven 157 passed against a migration-only DB); Documentation 5 (API.md, SETUP.md, ADRs.md, ROLLBACK.md - a new engineer can add a 'guest' role from docs alone). PROCESS: ~15 crafted prompts (not 60 vague), 1-2 iterations per feature (honored the two-iteration rule; only one justified restart - the M2 decomposition contract conflict), ~70% first-pass acceptance, most common issue type was environment/context assumptions (AI writing tests against local state it could see, not state it created), would-do-differently: add environment-independence to standard test review from M2. TIME: ~1 focused day of review-driven work vs an estimated 3-5 days handwritten - faster, and the win came from the review bar, not the typing. META-SKILL: without writing a line of code, performed systems thinking (decomposition), technical leadership (delegation), engineering rigor (5-category review), judgment (refine vs restart), systems integration (parallel streams), production engineering (hardening), and delivery (tested/documented/CI'd/rollback-plan feature). Knowledge check and mini task answered; mini task proof is the VERIFY live spot-checks (POST /teams 201 shape, members 201, audit 200, bad role/empty name -> 400 request_invalid, search plan verified). Risk identified: environment-dependent tests; mitigation: create-or-migrate rule + clean-DB suite run. Decision B (Production-Grade) was the right call: the CI failure in BREAK was the specific cost of skipping test-environment review - even at a production-grade bar, AI cannot see the difference between data it created and data that already existed, so the carol/3-team assumptions slipped through until the clean-DB run caught them.",
+  "evidence": [
+    "capstone: test_module8_integration.py - full user journey green",
+    "clean-DB proof: dropped+recreated DB, ran migrate.py (seeds alice+bob+carol), full pytest 157 passed 0 failed",
+    "permission matrix: test_module8_permissions.py 15 tests, deny+allow both directions",
+    "ship checklist: proof-aie-m8-verify.json - auth map, validation probes, secrets scan clean, docs spot-checks 6/6, CI steps verified, rollback plan written",
+    "docs: API.md, SETUP.md, ADRs.md, ROLLBACK.md",
+    "retrospective written: module-08-reflect.md (completeness, quality 5x5, process metrics, time efficiency, meta-skill)"
+  ],
+  "artifacts": [
+    "upsk/workspace-progress/module-08-reflect.md",
+    "upsk/workspace-progress/proof-aie-m8-verify.json",
+    "upsk/workspace-progress/proof-aie-m8-build.json",
+    "docs/API.md",
+    "docs/SETUP.md",
+    "docs/ADRs.md",
+    "docs/ROLLBACK.md"
+  ]
+}

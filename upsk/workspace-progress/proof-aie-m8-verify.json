@@ -1,0 +1,20 @@
+{
+  "summary": "Module 08 VERIFY: ran the full Ship Checklist with evidence for every item, not assertions. (1) AUTH: pulled the Module 07 endpoint map (module-07-security-review.md) - every Team Collaboration endpoint pairs with get_current_user plus require_owner or require_owner_or_admin (or author check for comments); no new endpoints were added this module (only tests and docs), so nothing bypasses auth. (2) VALIDATION: live probes confirmed Pydantic rules are enforced - empty team name -> 400 request_invalid, bad role 'superadmin' -> 400 request_invalid, whitespace-only comment body -> 400 request_invalid (codebase maps validation to the 400 error envelope per Module 05 design); schemas pin team name 1-100, EmailStr for invitations, Literal[admin,member,viewer] for roles, comment body 1-4000. (3) TESTS: full suite run on the current code = 147 passed, 0 failed (Redis installed and started locally to unblock the pre-existing redirect-cache tests). (4) SECRETS: regex scan across all py/yml/toml/cfg/ini/env/json/md found NO hardcoded passwords/API keys/tokens/private keys; config loads JWT_SECRET from environment with a validator that rejects placeholders <32 chars. (5) DOCS: three random-endpoint spot-checks made live API calls matching docs/API.md - POST /teams returns {id,name,owner_id,created_at} (201), POST /teams/{id}/members returns role member (201), GET /audit returns {items,total} (200); all six probe checks PASS. (6) CI: .github/workflows/ci.yml runs postgres+redis services, migrations, full pytest, the trigram search-plan assertion (replicated locally: 'search index plan verified', Bitmap Index Scan on ix_links_code_trgm), and docker build. (7) ROLLBACK: docs/ROLLBACK.md written - API is stateless so traffic halts in <1 min, schema is additive so image revert is DB-safe, forward-fix via FEATURE_TEAMS_ENABLED flag is the fastest switch, notification list included. All items signed off with evidence.",
+  "evidence": [
+    "auth map: module-07-security-review.md endpoint table (require_owner on role/member/invitation-revoke, require_owner_or_admin on member add/list/invitation/audit, author check on comments); no new endpoints added in M8",
+    "validation: live probes - empty team name 400 request_invalid, bad role 400 request_invalid, whitespace comment 400 request_invalid; schemas: name 1-100, EmailStr, Literal role, body 1-4000",
+    "tests: full suite 147 passed 0 failed (pytest -q, current code, Redis up)",
+    "secrets: secret_scan.py across py/yml/toml/cfg/ini/env/json/md - NO hardcoded secrets; JWT_SECRET env-loaded with placeholder/weak validator",
+    "docs spot-checks: POST /teams 201 {id,name,owner_id,created_at}; POST /teams/{id}/members 201 role=member; GET /audit 200 {items,total}; 6/6 PASS",
+    "CI: ci.yml steps verified; search-index plan check replicated locally (Bitmap Index Scan on ix_links_code_trgm)",
+    "rollback: docs/ROLLBACK.md - stateless API halt <1min, additive schema => image revert DB-safe, feature-flag forward-fix, notify list"
+  ],
+  "artifacts": [
+    "docs/ROLLBACK.md",
+    "docs/API.md",
+    "docs/SETUP.md",
+    "docs/ADRs.md",
+    "api/tests/test_module8_permissions.py",
+    "api/tests/test_module8_integration.py"
+  ]
+}

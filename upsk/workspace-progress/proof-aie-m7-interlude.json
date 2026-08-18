@@ -1,0 +1,9 @@
+{
+  "summary": "Interlude response (SolarWinds): recognized that AI-generated code's defining trait - matching existing patterns - is exactly what lets subtle flaws hide in plain sight, like the SolarWinds backdoor dressed as telemetry. My countermeasure is a composition-aware review that looks for correctness of checks, not just presence: (1) verify the permission check verifies the RIGHT permission level (admin/owner) not just ANY membership - the exact blind spot that let the BREAK privilege escalation hide behind isTeamMember; (2) verify resource IDs against caller access on every route, not just the routes that 'feel' sensitive; (3) test sequences and combinations (cross-team, self-modification, role-change + invalid-role + audit) not just individual endpoints; (4) treat 'looks like every other function' as a warning sign on authz paths. On implicit trust in the AI workflow: I have verified the model's output against the running service empirically (live probes, DB state) rather than trusting self-reports, and I treat the generated code as untrusted until a human traces the authz call chain. The assumption I had not questioned until this module was the build/merge step itself - that the AI's code reaches production as-reviewed - which is exactly why Module 8's end-to-end journey test matters.",
+  "evidence": [
+    "applied to M7: verified the RIGHT permission (require_owner) instead of accepting isTeamMember as 'authorized'",
+    "composition checks: test_module7_role_escalation.py tests sequences (viewer self-promotion, admin change, owner promote) not just endpoint presence",
+    "cross-team and cross-feature probes in test_module7_security.py",
+    "trust-but-verify: live probes against running service and DB-backed checks rather than AI self-reports"
+  ]
+}

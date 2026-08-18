@@ -1,0 +1,19 @@
+{
+  "summary": "Module 08 BUILD: shipped the production-grade Team Collaboration test + documentation + CI package (Decision B). PART 1 - test suite: added tests/test_module8_permissions.py (15 tests) pinning the admin/member/viewer/owner permission-boundary matrix in BOTH directions (admin can invite/list but cannot change roles or remove members; member/viewer cannot invite, list members, view team audit, or modify roles; owner can do everything; duplicate-invite of an existing member returns 409; viewer cannot comment on a link they don't own). Fixed a CI gap: carol@example.com added to DEV_USERS in api/migrations/migrate.py so fresh databases (CI, Docker) seed the third user my Module 07 role-escalation suite depends on. PART 4 - capstone integration test: tests/test_module8_integration.py runs one continuous journey (A creates team -> A invites B -> B accepts -> B comments with @mention of A -> activity feed shows the comment -> owner audit shows team.created/invitation_created/invitation_accepted, author audit shows comment.created/mention.notification), adapting to the Module 07 link-owner comment scoping. PART 3 - CI: verified .github/workflows/ci.yml already runs postgres:16 + redis:7 services, migrations, full pytest, trigram search-plan assertion, and docker build; installed+started Redis locally (was the cause of the pre-existing full-suite hang) so all 147 tests pass. PART 2 - documentation: docs/API.md (full endpoint reference), docs/SETUP.md (env, DB, worker, tests, Docker, troubleshooting), docs/ADRs.md (ADR-001 owner-scoped comments, ADR-002 owner-only role changes, ADR-003 append-only audit, ADR-004 trigram index). Full suite: 147 passed, 0 failed.",
+  "evidence": [
+    "permission matrix: tests/test_module8_permissions.py - 15 tests, admin/member/viewer/owner boundaries verified in both directions, all green",
+    "capstone journey: tests/test_module8_integration.py - create team -> invite -> accept -> comment @mention -> activity feed -> audit log, green",
+    "CI gap fixed: api/migrations/migrate.py DEV_USERS now seeds carol@example.com (fresh DBs seed all 3 users)",
+    "CI pipeline verified: .github/workflows/ci.yml - postgres+redis services, migrations, pytest, trigram plan check, docker build",
+    "docs: docs/API.md, docs/SETUP.md, docs/ADRs.md written",
+    "full suite: 147 passed, 0 failed (Redis installed and started locally, resolving the pre-existing hang)"
+  ],
+  "artifacts": [
+    "api/tests/test_module8_permissions.py",
+    "api/tests/test_module8_integration.py",
+    "api/migrations/migrate.py",
+    "docs/API.md",
+    "docs/SETUP.md",
+    "docs/ADRs.md"
+  ]
+}

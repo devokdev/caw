@@ -1,0 +1,22 @@
+{
+  "summary": "Module 6 VERIFY: ran three levels of verification on the parallel-agent outputs (comment threads, @mention parser + notifications, audit log) after merging. Level 1 individual: comment create/list/update/delete all work with auth (unauth 401), parse('Hey @jane.doe, check this') returns ['jane.doe'], @mention on comment creates a 'mention' notification for the mentioned user. Level 2 integration: comment with @mention fires parser + notification; comment.created/comment.deleted/comment.updated and mention.notification all appear in the audit log; notification itself is audit-logged. Level 3 conflict detection: single shared schema migration adds comments/notifications/audit_log tables cleanly in sequence (create_all idempotent), no naming collisions (unique comment_service/audit_service/mentions modules per agent), full suite green together.",
+  "evidence": [
+    "POST /links/{id}/comments -> 201, response includes mentions=['bob'] for body 'first comment @bob please review'",
+    "GET /links/{id}/comments -> 200 total=1; PATCH /comments/{id} -> 200; DELETE /comments/{id} -> 204; unauthenticated POST -> 401",
+    "GET /mentions/parse?text=Hey @jane.doe, check this -> ['jane.doe']",
+    "GET /notifications (bob) -> kinds include 'mention' (notification fired from alice's comment)",
+    "GET /audit (alice) -> actions include comment.created, comment.updated, comment.deleted, mention.notification, team.created, team.member_added, team.invitation_created",
+    "post-delete audit still contains comment.deleted=true (append-only audit)",
+    "full test suite: 113 passed together (not just individually)"
+  ],
+  "artifacts": [
+    "api/app/models.py",
+    "api/app/routers/comments.py",
+    "api/app/routers/audit.py",
+    "api/app/services/comment_service.py",
+    "api/app/services/mentions.py",
+    "api/app/services/audit_service.py",
+    "api/app/services/teams_service.py",
+    "api/tests/test_module6_parallel.py"
+  ]
+}
