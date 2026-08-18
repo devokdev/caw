@@ -1,0 +1,12 @@
+{
+  "summary": "Fixed the flawed design document by resolving all 3 critical gaps: genuine alternatives, hidden assumptions surfaced as open questions, and concrete 5-question risk mitigation.",
+  "evidence": [
+    "Added 3 genuine alternatives to Kafka (Managed Cloud Queue, In-Process Worker Queue, Scheduled Batch Processing) with balanced pros and cons.",
+    "Surfaced the database 10k writes/sec benchmark assumption as an explicit Open Question with a concrete staging load test validation plan.",
+    "Replaced vague 'monitor closely' mitigation with an actionable 5-part plan (Datadog metric, 10k lag threshold, scaling script command, on-call SRE owner, 15m resolution SLA).",
+    "Included the risk of doing nothing."
+  ],
+  "artifacts": [
+    "rfc-event-pipeline-fixed.md"
+  ]
+}

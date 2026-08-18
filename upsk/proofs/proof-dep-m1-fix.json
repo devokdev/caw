@@ -1,0 +1,12 @@
+{
+  "summary": "Resolved specification contradiction by framing two concrete options and marking cancellation requirements blocked pending PM choice.",
+  "evidence": [
+    "Option 1: Platform-First Cancellation (universal 24h refund window, maximum predictability, lower provider autonomy).",
+    "Option 2: Provider Policy with Platform Floor (1h cooling off safety floor + provider custom tiers, balanced flexibility).",
+    "Updated artifacts/requirements/requirements-matrix.md with REQ-U-05 marked 'BLOCKED - Pending PM Decision' and mapped downstream affected subsystems (payouts, escrow, dashboard, policy editor)."
+  ],
+  "artifacts": [
+    "artifacts/requirements/requirements-matrix.md",
+    "caw/upsk/proofs/proof-dep-m1-fix.json"
+  ]
+}

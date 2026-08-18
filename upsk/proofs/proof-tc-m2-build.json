@@ -1,0 +1,12 @@
+{
+  "summary": "Authored technical-explanation.md for REST-to-GraphQL migration using top-down pyramid structure.",
+  "evidence": [
+    "Opening lede in Decision Summary clearly specifies the 8-week migration timeline, 40% call reduction, and removal of 15 aggregation endpoints.",
+    "Defined GraphQL using the buffet vs fixed-menu analogy and compared against rejected BFF and schema standardization alternatives.",
+    "Categorized risks (learning curve, query depth, caching) with active-voice mitigations.",
+    "Outlined Priya's concrete onboarding scope, pairing partner, and 3 actionable next steps with repo branch and Slack channel links."
+  ],
+  "artifacts": [
+    "technical-explanation.md"
+  ]
+}

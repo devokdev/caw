@@ -1,0 +1,13 @@
+{
+  "summary": "Rewrote technical explanation into a concise, active-voice, top-down structure meeting all 5 criteria.",
+  "evidence": [
+    "Key point in opening sentence: 'ShopStream will migrate its public API from REST to GraphQL over 8 weeks...'",
+    "Every acronym/technical term defined on first use: FE (Frontend), BFF (Backend-for-Frontend), SRE (Site Reliability Engineering), GraphQL (query language).",
+    "Converted passive voice to active owners: 'The backend team will pair program...', 'The SRE team will enforce depth limits...'",
+    "Structured with clear scannable H2 headers: Decision Summary, Core Rationale, Risks & Mitigations, Next Steps for Priya.",
+    "Word count reduced from 350+ words to under 180 words (over 45% noise reduction)."
+  ],
+  "artifacts": [
+    "technical-explanation-rewrite.md"
+  ]
+}

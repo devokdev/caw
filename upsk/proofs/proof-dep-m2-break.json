@@ -1,0 +1,11 @@
+{
+  "summary": "Identified circular dependency design flaw in provider onboarding cycle.",
+  "evidence": [
+    "Identified cycle: Provider Vetting -> Admin Dashboard -> Provider Data -> Provider Vetting.",
+    "Root cause diagnosis: Conflation of data state ('pending application data submitted' vs 'active live provider data') and execution mechanism (complex admin dashboard UI vs lightweight approval script/API).",
+    "Analyzed why reordering cannot fix circular dependencies without redefining data lifecycle states."
+  ],
+  "artifacts": [
+    "caw/upsk/proofs/proof-dep-m2-break.json"
+  ]
+}

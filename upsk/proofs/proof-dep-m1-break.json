@@ -1,0 +1,10 @@
+{
+  "summary": "Identified specification contradiction in cancellation policy rules between user and provider flows.",
+  "evidence": [
+    "Identified conflict between Paragraph 1 update ('all cancellations within 24 hours receive full refund; cancellations after 24 hours non-refundable') and Paragraph 2 / original spec ('providers set their own cancellation policies and those apply when users cancel').",
+    "Analyzed failure mode: ambiguous precedence between platform global policy and provider custom autonomy, impact on escrow refunds and provider revenue guarantees."
+  ],
+  "artifacts": [
+    "caw/upsk/proofs/proof-dep-m1-break.json"
+  ]
+}

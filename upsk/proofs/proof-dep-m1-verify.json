@@ -1,0 +1,12 @@
+{
+  "summary": "Completed self-check and verification of Module 1 extracted requirements and probing questions.",
+  "evidence": [
+    "Most confident requirements: 15% platform commission (explicit rule), provider time slot availability configuration, transactional booking emails.",
+    "Least confident / inferred requirements: sub-200ms p95 search latency for 'feel instant', multi-city regional tenant isolation for 5-city expansion, escrow dispute window before provider balance release.",
+    "Verified all probing questions covered: latency quantification in ms, cancellation money-flow & transaction fee responsibility, provider vetting criteria & rejection handling, and analytics scope bounds."
+  ],
+  "artifacts": [
+    "artifacts/requirements/requirements-matrix.md",
+    "caw/upsk/proofs/proof-dep-m1-verify.json"
+  ]
+}

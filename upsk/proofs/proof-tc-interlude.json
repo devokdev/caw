@@ -1,0 +1,11 @@
+{
+  "summary": "Reflected on the Mars Climate Orbiter interlude regarding specification interfaces and explicit units.",
+  "evidence": [
+    "Identified the root cause of interface ambiguity between Lockheed Martin (pound-force seconds) and JPL (newton-seconds).",
+    "Understood why cross-boundary interface contracts require explicit verification rather than unstated local conventions.",
+    "Committed to always writing explicit units and verifiable contracts in all future technical specs and design documents."
+  ],
+  "artifacts": [
+    "technical-explanation-rewrite.md"
+  ]
+}

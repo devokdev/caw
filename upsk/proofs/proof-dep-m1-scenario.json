@@ -1,0 +1,11 @@
+{
+  "summary": "Selected SkillSwap scenario as canonical two-sided marketplace product.",
+  "evidence": [
+    "Recorded bootcamp.product_scenario = 'skillswap' in progress/state.json.",
+    "Targeting SkillSwap constraints: search latency, double-booking prevention, cancellation rules, platform payouts, multi-city scaling."
+  ],
+  "artifacts": [
+    "progress/state.json",
+    "caw/upsk/proofs/proof-dep-m1-scenario.json"
+  ]
+}

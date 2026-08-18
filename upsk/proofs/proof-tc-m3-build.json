@@ -1,0 +1,13 @@
+{
+  "summary": "Authored lightweight RFC design document proposing API gateway rate limiting with Redis token bucket.",
+  "evidence": [
+    "Problem statement highlights the 50k req/min incident, 2 AM manual redeployments, and blocked paid tier launch.",
+    "Proposed approach specifies gateway-level token bucket algorithm with Redis Lua scripts and standard HTTP 429 headers.",
+    "Evaluated two concrete alternatives (in-memory per-pod vs Redis fixed window) with balanced pros and cons.",
+    "Detailed risks and mitigations including Redis fail-open strategy, latency co-location, and risk of doing nothing.",
+    "Included 2 unresolved open questions on enterprise overrides and unauthenticated endpoint defaults."
+  ],
+  "artifacts": [
+    "rfc-rate-limiting.md"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "summary": "Completed Module 3 CONTEXT step examining the importance and purpose of Design Documents vs Specs.",
+  "evidence": [
+    "Analyzed the real-world failure case of unreviewed WebSocket infrastructure constraints leading to scrapped engineering work.",
+    "Distinguished Design Document/RFC ('Should we build this, and how?') vs Specification ('What exact implementation are we building?').",
+    "Understood why cross-functional review before code prevents costly architectural rework."
+  ],
+  "artifacts": []
+}

@@ -1,0 +1,15 @@
+{
+  "summary": "Completed Module 1 REFLECT knowledge check and submitted evaluation report.",
+  "evidence": [
+    "Comprehension Q1: Solves surface-level requirement reading and unstated architectural assumptions.",
+    "Comprehension Q2: Structuring as Categorized Matrix because it exposes stakeholder blind spots.",
+    "Comprehension Q3: artifacts/requirements/requirements-matrix.md with 22 categorized items and conflict resolution options.",
+    "Mini Practical Task: Verified cancellation policy tension mapping and fee allocation impact.",
+    "Module evaluation report accepted and recorded with score 5/5."
+  ],
+  "artifacts": [
+    "artifacts/requirements/requirements-matrix.md",
+    "caw/upsk/proofs/report-dep-m1.json",
+    "caw/upsk/proofs/proof-dep-m1-reflect.json"
+  ]
+}
