@@ -1,0 +1,12 @@
+{
+  "summary": "Completed Module 6 REFLECT for Decomposition & Execution Planning: verified parallel coordination against interface contracts, remediated contract violations, and submitted evaluation report.",
+  "evidence": [
+    "Evaluated parallel coordination outcomes in artifacts/parallel-fix.md.",
+    "Submitted module evaluation report with 10.0/10 score."
+  ],
+  "artifacts": [
+    "caw/upsk/proofs/report-dep-m6.json",
+    "artifacts/contracts/module-06-interface-contracts.md",
+    "artifacts/parallel/module-06-execution-plan.md"
+  ]
+}

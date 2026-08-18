@@ -1,0 +1,10 @@
+{
+  "summary": "Completed Module 8 BREAK for Decomposition & Execution Planning: diagnosed provider dashboard missing bookings symptom, uncovered semantic status contract mismatch (confirmed vs active), and identified seam contract reconciliation as the root cause.",
+  "evidence": [
+    "Traced query filter in Provider Dashboard expecting status 'active' against Booking API producing status 'confirmed'.",
+    "Authored root cause analysis and shared state machine solution in artifacts/integration-break.md."
+  ],
+  "artifacts": [
+    "artifacts/integration-break.md"
+  ]
+}

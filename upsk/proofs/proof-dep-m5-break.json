@@ -1,0 +1,11 @@
+{
+  "summary": "Completed Module 5 BREAK diagnosis, identifying root causes of 'technically correct disasters' and distinguishing ticket-level gaps from shared cross-cutting architectural standards.",
+  "evidence": [
+    "Analyzed authentication IDOR, rate limiting abuse, unhandled error leaks, and missing audit logs.",
+    "Formulated clear boundaries between ticket requirements and repository-wide standard references.",
+    "Documented findings in break-task-spec-diagnosis.md."
+  ],
+  "artifacts": [
+    "break-task-spec-diagnosis.md"
+  ]
+}

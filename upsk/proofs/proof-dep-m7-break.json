@@ -1,0 +1,10 @@
+{
+  "summary": "Completed Module 7 BREAK for Decomposition & Execution Planning: analyzed layered RBAC/department requirements, escalated blast radius across Auth/JWT and User models, and pivoted decision architecture from simple flag to scoped claims-based RBAC.",
+  "evidence": [
+    "Identified escalating blast radius on Auth/JWT and User data model in artifacts/adaptation-break.md.",
+    "Formulated scoped RBAC architecture to handle manager, employee, and dept head authorization rules."
+  ],
+  "artifacts": [
+    "artifacts/adaptation-break.md"
+  ]
+}

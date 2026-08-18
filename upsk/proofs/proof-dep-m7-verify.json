@@ -1,0 +1,11 @@
+{
+  "summary": "Completed Module 7 VERIFY for Decomposition & Execution Planning: verified stakeholder impact statement clarity, defended descope cuts against dependency breakage, and confirmed blast radius classifications.",
+  "evidence": [
+    "Defended dependency safety of cut tickets in artifacts/adaptation-verification.md.",
+    "Validated impact statement clarity against PM actionable requirements."
+  ],
+  "artifacts": [
+    "artifacts/adaptation-verification.md",
+    "artifacts/adaptation/module-07-adaptation-note.md"
+  ]
+}
